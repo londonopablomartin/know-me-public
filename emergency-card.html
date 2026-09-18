@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ficha de emergencia — Know Me</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f3f5f4; color: #16211f;
+  }
+  .bar { background: #0f6b5c; color: #fff; padding: 16px 20px; font-weight: 700; font-size: 18px; }
+  .page { max-width: 480px; margin: 0 auto; padding: 20px; }
+  .warning {
+    background: #f5e6d0; color: #7a4a10; border-radius: 12px; padding: 14px 16px;
+    font-size: 14px; margin-bottom: 20px; text-align: center;
+  }
+  .card { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #6b7a72; margin-bottom: 6px; font-weight: 600; }
+  .blood { font-size: 40px; font-weight: 800; color: #0f6b5c; }
+  .chip { display: inline-block; background: #dceee9; color: #0f6b5c; border-radius: 999px; padding: 6px 14px; margin: 4px 6px 4px 0; font-size: 14px; font-weight: 600; }
+  .empty { color: #6b7a72; font-size: 14px; }
+  .contact { padding: 10px 0; border-bottom: 1px solid #e5e9e6; }
+  .contact:last-child { border-bottom: none; }
+  .contact .name { font-weight: 700; }
+  .contact .phone { color: #0f6b5c; font-weight: 600; }
+  .center { text-align: center; padding: 60px 20px; }
+  footer { text-align: center; font-size: 12px; color: #6b7a72; padding: 24px; }
+</style>
+</head>
+<body>
+  <div class="bar">🩺 Know Me — Ficha de emergencia</div>
+  <div class="page" id="content"><div class="center"><p>Cargando…</p></div></div>
+  <footer>Know Me · Esta información es confidencial, úsala solo para atender una emergencia real.</footer>
+<script>
+  var SUPABASE_URL = "https://povrmihhykldhelqymvo.supabase.co";
+  var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvdnJtaWhoeWtsZGhlbHF5bXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0ODM3NDYsImV4cCI6MjEwMjA1OTc0Nn0.paKTfCngiGYXxi3ZyxMP80faNCs77xAYnk4tKyinBxA";
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function chipList(items) {
+    if (!items || items.length === 0) return '<p class="empty">Sin información registrada.</p>';
+    var out = '';
+    for (var i = 0; i < items.length; i++) out += '<span class="chip">' + escapeHtml(items[i]) + '</span>';
+    return out;
+  }
+
+  function render(html) {
+    document.getElementById('content').innerHTML = html;
+  }
+
+  function load() {
+    var params = new URLSearchParams(location.search);
+    var token = params.get('token');
+    if (!token) {
+      render('<div class="center"><p>Falta el código en el link.</p></div>');
+      return;
+    }
+    fetch(SUPABASE_URL + '/rest/v1/rpc/resolve_emergency_qr', {
+      method: 'POST',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': 'Bearer ' + ANON_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ p_token: token }),
+    })
+      .then(function (resp) { return resp.json(); })
+      .then(function (data) {
+        if (data && data.error) {
+          var messages = {
+            not_found: 'Este código no corresponde a ningún perfil de emergencia.',
+            revoked: 'Este código fue reemplazado por uno nuevo y ya no es válido.',
+            expired: 'Este código ya expiró.',
+          };
+          render('<div class="center"><p>' + (messages[data.error] || 'No se pudo leer la información.') + '</p></div>');
+          return;
+        }
+        var contacts = (data && data.contacts) || [];
+        var contactsHtml = contacts.length === 0
+          ? '<p class="empty">No hay contactos registrados.</p>'
+          : contacts.map(function (c) {
+              return '<div class="contact"><div class="name">' + escapeHtml(c.full_name) +
+                (c.relationship ? ' · ' + escapeHtml(c.relationship) : '') +
+                '</div><div class="phone"><a href="tel:' + escapeHtml(c.phone) + '" style="color:inherit;text-decoration:none;">' +
+                escapeHtml(c.phone) + '</a></div></div>';
+            }).join('');
+
+        render(
+          '<div class="warning">Esta ficha no reemplaza atención médica profesional. Ante una emergencia, contacta primero a los servicios de emergencia de tu país.</div>' +
+          '<div class="card"><div class="label">Tipo de sangre</div><div class="blood">' + escapeHtml((data && data.blood_type) || 'No especificado') + '</div></div>' +
+          '<div class="card"><div class="label">Alergias</div>' + chipList(data && data.allergies) + '</div>' +
+          '<div class="card"><div class="label">Condiciones médicas</div>' + chipList(data && data.conditions) + '</div>' +
+          '<div class="card"><div class="label">Medicamentos</div>' + chipList(data && data.medications) + '</div>' +
+          '<div class="card"><div class="label">Contactos de emergencia</div>' + contactsHtml + '</div>'
+        );
+      })
+      .catch(function () {
+        render('<div class="center"><p>No se pudo cargar la información. Intenta de nuevo.</p></div>');
+      });
+  }
+
+  load();
+</script>
+</body>
+</html>

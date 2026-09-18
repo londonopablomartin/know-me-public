@@ -1,0 +1,239 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Política de Privacidad — Know Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5f4; --bg-raised: #ffffff; --ink: #16211f; --ink-soft: #49584f;
+    --accent: #0f6b5c; --accent-soft: #dceee9; --warn: #9a5b12; --warn-soft: #f5e6d0;
+    --line: #d9ddd7; --focus: #0f6b5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101613; --bg-raised: #161f1b; --ink: #e8ede9; --ink-soft: #a7b6ac;
+      --accent: #57d9bd; --accent-soft: #17332c; --warn: #e2ab5f; --warn-soft: #2e2416;
+      --line: #283530; --focus: #57d9bd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101613; --bg-raised: #161f1b; --ink: #e8ede9; --ink-soft: #a7b6ac;
+    --accent: #57d9bd; --accent-soft: #17332c; --warn: #e2ab5f; --warn-soft: #2e2416;
+    --line: #283530; --focus: #57d9bd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Iowan Old Style", serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .page { max-width: 700px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+  .eyebrow {
+    font-family: "IBM Plex Sans", ui-sans-serif, "Segoe UI", sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 0.8rem;
+  }
+  h1 {
+    font-family: "IBM Plex Sans", ui-sans-serif, "Segoe UI", sans-serif;
+    font-weight: 700; font-size: clamp(1.8rem, 4vw, 2.3rem);
+    line-height: 1.15; margin: 0 0 0.6rem; text-wrap: balance;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82rem; color: var(--ink-soft); margin: 0 0 1.6rem;
+  }
+  .draft-banner {
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+    border-radius: 10px; padding: 0.9rem 1.1rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.88rem; color: var(--ink); margin-bottom: 2.4rem;
+  }
+  .draft-banner strong { color: var(--warn); }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 0.45rem;
+    margin-bottom: 2.6rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line);
+  }
+  nav.toc a {
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.76rem; font-weight: 500; color: var(--ink-soft);
+    text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+  }
+  nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+  section { margin-bottom: 2.4rem; scroll-margin-top: 1.5rem; }
+  h2 {
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 1.15rem; font-weight: 600; margin: 0 0 0.8rem;
+    display: flex; gap: 0.55rem; align-items: baseline;
+  }
+  h2 .n { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.8rem; color: var(--accent); }
+  p { margin: 0 0 1rem; max-width: 62ch; }
+  ul { margin: 0 0 1rem; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; max-width: 60ch; }
+  strong { color: var(--ink); }
+  .callout {
+    background: var(--accent-soft); border-radius: 10px; padding: 0.9rem 1.1rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif; font-size: 0.88rem; margin: 1rem 0;
+  }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 1rem 0; }
+  table { width: 100%; border-collapse: collapse; font-family: "IBM Plex Sans", sans-serif; font-size: 0.85rem; background: var(--bg-raised); }
+  th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+  tbody tr:last-child td { border-bottom: none; }
+  footer {
+    border-top: 1px solid var(--line); padding-top: 1.6rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif; font-size: 0.85rem; color: var(--ink-soft);
+  }
+  footer a { color: var(--accent); }
+</style>
+</head><body>
+<div class="page">
+  <p class="eyebrow">Know Me</p>
+  <h1>Política de Privacidad</h1>
+  <div class="meta">
+    <span>Última actualización: 18 de septiembre de 2026</span>
+    <span>Contacto: <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a></span>
+  </div>
+
+  <div class="draft-banner">
+    <strong>Borrador.</strong> Este documento fue preparado como punto de partida para el lanzamiento de Know Me y todavía no ha sido revisado por un abogado. Antes de publicarlo o de enviar la app a revisión de Apple/Google, hazlo revisar por un profesional legal en tu jurisdicción.
+  </div>
+
+  <nav class="toc">
+    <a href="#quienes-somos">Quiénes somos</a>
+    <a href="#datos">Qué datos recopilamos</a>
+    <a href="#uso">Cómo los usamos</a>
+    <a href="#terceros">Con quién los compartimos</a>
+    <a href="#qr">El código QR</a>
+    <a href="#tarjeta-fisica">Tarjeta física opcional</a>
+    <a href="#empresas">Empresas y empleados</a>
+    <a href="#consentimiento">Tu autorización</a>
+    <a href="#seguridad">Seguridad</a>
+    <a href="#retencion">Retención y borrado</a>
+    <a href="#derechos">Tus derechos</a>
+    <a href="#menores">Menores de edad</a>
+    <a href="#cambios">Cambios</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <section id="quienes-somos">
+    <h2><span class="n">01</span>Quiénes somos</h2>
+    <p>Know Me es una aplicación que permite a las personas guardar información médica de emergencia y compartirla de forma controlada mediante un código QR, y ofrece un asistente virtual de orientación en salud. También permite que empresas vinculen a sus empleados, organicen su nómina y sedes, y aporten el protocolo de su ARL para que el asistente lo tenga en cuenta. Esta política explica qué información recopilamos, para qué la usamos y qué control tienes sobre ella.</p>
+  </section>
+
+  <section id="datos">
+    <h2><span class="n">02</span>Qué datos recopilamos</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Categoría</th><th>Datos</th></tr></thead>
+        <tbody>
+          <tr><td>Cuenta</td><td>Correo electrónico, tipo de cuenta (Persona o Empresa)</td></tr>
+          <tr><td>Ficha médica (Persona)</td><td>Nombre completo, tipo de sangre, alergias, condiciones médicas, medicamentos</td></tr>
+          <tr><td>Contactos de emergencia</td><td>Nombre, teléfono y relación de las personas que designes</td></tr>
+          <tr><td>Verificación (Empresa)</td><td>Razón social y número de identificación tributaria</td></tr>
+          <tr><td>Código QR</td><td>Un identificador único por persona, y un registro de cuándo se consulta (sin identificar a quien escanea)</td></tr>
+          <tr><td>Asistente de salud</td><td>Los mensajes que envías al chatbot durante la conversación</td></tr>
+          <tr><td>Vinculación empresarial (opcional)</td><td>El código de empresa que ingresas, tu sede (si aplica) y la fecha en que te vinculaste, si te unes a una empresa</td></tr>
+          <tr><td>Nómina cargada por tu empleador (opcional)</td><td>Si tu empresa sube una lista de empleados esperados, tu nombre y correo pueden aparecer ahí antes incluso de que crees tu cuenta — solo para que la empresa sepa quién falta por vincularse; nunca crea una cuenta por ti</td></tr>
+          <tr><td>Protocolo de ARL (Empresa)</td><td>Nombre y contacto de la ARL, y los documentos PDF de protocolo que la empresa decida subir</td></tr>
+          <tr><td>Marca de empresa (Empresa)</td><td>Logo y color que la empresa decida subir, visibles en el QR de sus empleados vinculados</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>No recopilamos tu ubicación, ni datos de navegación o de otras apps en tu dispositivo.</p>
+  </section>
+
+  <section id="uso">
+    <h2><span class="n">03</span>Cómo usamos tus datos</h2>
+    <ul>
+      <li>Para crear y proteger tu cuenta.</li>
+      <li>Para mostrar tu ficha médica a quien escanee tu código QR en una emergencia.</li>
+      <li>Para que el asistente de salud pueda responder tus mensajes.</li>
+      <li>Para verificar cuentas de tipo Empresa antes de habilitarlas.</li>
+      <li>Si te vinculas a una empresa, para que el asistente incorpore la ARL y el protocolo de esa empresa al orientarte, y para que la empresa vea cuántos empleados están vinculados, en qué sede y cuándo actualizaron su ficha (nunca el contenido médico — ver la sección "Empresas y empleados").</li>
+      <li>Si solicitas o generas una tarjeta física de tu QR, para producirla e imprimirla (ver "Tarjeta física opcional").</li>
+    </ul>
+    <p>No usamos tus datos para publicidad ni los vendemos a terceros.</p>
+  </section>
+
+  <section id="terceros">
+    <h2><span class="n">04</span>Con quién compartimos datos</h2>
+    <p>Usamos estos proveedores para operar Know Me:</p>
+    <ul>
+      <li><strong>Supabase</strong> — aloja nuestra base de datos, el almacenamiento de documentos y gestiona el inicio de sesión. Toda la información de tu cuenta, tu ficha médica y los documentos de ARL viven ahí, cifrados en tránsito y en reposo.</li>
+      <li><strong>Anthropic (API de Claude)</strong> — procesa los mensajes que envías al asistente de salud para poder generar una respuesta. Ese contenido se envía únicamente para producir la respuesta de esa conversación.</li>
+      <li><strong>Voyage AI</strong> — convierte el texto de los documentos de protocolo ARL (y tus mensajes, al buscar) en representaciones numéricas para poder encontrar el fragmento más relevante. Solo procesa ese contenido con ese fin puntual, nunca tu ficha médica.</li>
+      <li><strong>Resend</strong> — servicio de envío de correo que usamos para (a) avisarle a nuestro equipo de producción cuando generas un código QR, para poder ofrecerte una tarjeta física, y (b) mandarle a las empresas un resumen semanal de cuántos empleados tienen la ficha desactualizada. Resend procesa tu nombre, correo y (si aplica) el nombre de tu empresa únicamente para entregar esos correos.</li>
+      <li><strong>n8n</strong> — herramienta de automatización que usamos internamente para generar y enviar el resumen semanal a las empresas descrito arriba. No tiene acceso a fichas médicas, solo a los conteos agregados y el correo de contacto de la empresa.</li>
+    </ul>
+    <div class="callout">Ninguno de estos proveedores tiene permiso para usar tu información para ningún fin distinto al de operar Know Me.</div>
+  </section>
+
+  <section id="qr">
+    <h2><span class="n">05</span>El código QR de emergencia</h2>
+    <p>Tu código QR contiene un identificador único, no tu información médica directamente. Cualquier persona que lo escanee puede ver tu ficha de emergencia (tipo de sangre, alergias, condiciones, medicamentos y contactos) — por diseño, así funciona un QR de emergencia: debe poder leerse sin que quien te auxilia tenga que iniciar sesión.</p>
+    <p>Como tus tarjetas físicas se mandan a fabricar, regenerar tu código ya no es instantáneo: debes dar un motivo y esperar la aprobación de tu empresa (si estás vinculado a una) o del equipo de Know Me (si eres independiente). Una vez aprobado, el código anterior se invalida de inmediato. Cada vez que alguien lo escanea, queda un registro con fecha y hora (sin datos de quien escaneó) que puedes consultar.</p>
+  </section>
+
+  <section id="tarjeta-fisica">
+    <h2><span class="n">06</span>Tarjeta física opcional</h2>
+    <p>Cada vez que se genera o aprueba la regeneración de tu código QR, nuestro sistema crea la imagen del código y le envía un correo a nuestro equipo de producción con tu nombre, tu correo, tu empresa y sede (si aplica) y el código QR, para poder ofrecerte una tarjeta física impresa. Este envío usa el proveedor Resend, descrito en la sección anterior. Tu ficha de emergencia también queda disponible en una página web pública (no requiere tener la app instalada), para que cualquier cámara pueda leer el código impreso.</p>
+  </section>
+
+  <section id="empresas">
+    <h2><span class="n">07</span>Empresas y empleados vinculados</h2>
+    <p>Si eres una Persona y te vinculas a una empresa con su código de invitación (al registrarte o después, desde tu cuenta), pasa lo siguiente:</p>
+    <ul>
+      <li>La empresa puede ver <strong>cuántos empleados están vinculados</strong>, <strong>en qué sede</strong> (si la empresa maneja varias) y <strong>cuándo actualizó cada uno su ficha por última vez</strong> — solo esos metadatos, no el contenido.</li>
+      <li>La empresa <strong>nunca puede ver</strong> tu tipo de sangre, alergias, condiciones, medicamentos ni contactos de emergencia a través de esta vinculación.</li>
+      <li>Si tu empresa subió una lista de nómina esperada antes de que te registraras, tu nombre y correo pudieron haber estado ahí — eso no crea ninguna cuenta ni perfil médico por ti, y desaparece de esa lista en cuanto te vinculas.</li>
+      <li>Cuando le escribes al asistente de salud, este puede usar el nombre y contacto de la ARL de tu empresa, y buscar fragmentos relevantes en los documentos de protocolo que la empresa haya subido, para orientarte mejor.</li>
+      <li>Si solicitas un nuevo código QR, tu empresa revisa el motivo y lo aprueba o rechaza — ver "El código QR de emergencia".</li>
+    </ul>
+    <p>Si eres una Empresa, los documentos, nómina y sedes que subas se usan únicamente para operar tu cuenta de Know Me — no se comparten con otras empresas ni se usan para ningún otro fin.</p>
+    <p>La vinculación es opcional y puedes desvincularte tú mismo en cualquier momento desde el menú de la app ("Desvincularme de mi empresa"), sin necesidad de escribirnos.</p>
+  </section>
+
+  <section id="consentimiento">
+    <h2><span class="n">08</span>Tu autorización</h2>
+    <p>Como tu ficha médica es un <strong>dato sensible</strong> bajo la Ley 1581 de 2012 de Colombia, te pedimos una autorización específica —separada de estos Términos— antes de guardar tu ficha por primera vez, y registramos la fecha en que la diste. Puedes consultar esa fecha en cualquier momento desde "Mis datos" en el menú de la app. Para el detalle completo de cómo tratamos tus datos como responsables, consulta también nuestra <a href="./data-treatment-policy.html">Política de Tratamiento de Datos Personales</a>.</p>
+  </section>
+
+  <section id="seguridad">
+    <h2><span class="n">09</span>Seguridad</h2>
+    <p>Tus datos viajan cifrados (TLS) y se almacenan cifrados en reposo. El acceso a tu información dentro de la base de datos está restringido por reglas que solo permiten a cada cuenta leer y modificar sus propios datos. Los documentos de ARL y los logos de empresa se guardan en almacenamiento accesible solo por la empresa que los subió (los logos son de lectura pública, ya que se muestran en el QR de los empleados).</p>
+  </section>
+
+  <section id="retencion">
+    <h2><span class="n">10</span>Retención y borrado de tus datos</h2>
+    <p>Conservamos tus datos mientras tu cuenta esté activa. Puedes <strong>eliminar tu cuenta y todos tus datos de forma permanente en cualquier momento</strong>, directamente desde la app (menú de la pantalla principal → "Eliminar mi cuenta"). Esta acción borra tu ficha médica, tus contactos de emergencia, tu código QR, su historial de accesos, y tu vinculación con cualquier empresa, y no se puede deshacer.</p>
+  </section>
+
+  <section id="derechos">
+    <h2><span class="n">11</span>Tus derechos</h2>
+    <p>Puedes acceder, corregir o eliminar tu información en cualquier momento desde la app. Si necesitas ayuda para ejercer estos derechos, o quieres solicitar una copia de tus datos, escríbenos a <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a>.</p>
+  </section>
+
+  <section id="menores">
+    <h2><span class="n">12</span>Menores de edad</h2>
+    <p>Know Me está destinada a personas mayores de 18 años. No recopilamos deliberadamente información de menores de edad.</p>
+  </section>
+
+  <section id="cambios">
+    <h2><span class="n">13</span>Cambios a esta política</h2>
+    <p>Si hacemos cambios importantes a esta política, te avisaremos dentro de la app antes de que entren en vigor.</p>
+  </section>
+
+  <section id="contacto">
+    <h2><span class="n">14</span>Contacto</h2>
+    <p>¿Preguntas sobre esta política o sobre tus datos? Escríbenos a <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a>.</p>
+  </section>
+
+  <footer>
+    Know Me — ver también los <a href="./terms-of-service.html">Términos de Servicio</a> y la <a href="./data-treatment-policy.html">Política de Tratamiento de Datos Personales</a>.
+  </footer>
+</div>
+</body></html>

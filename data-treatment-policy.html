@@ -1,0 +1,294 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Política de Tratamiento de Datos Personales — Know Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5f4; --bg-raised: #ffffff; --ink: #16211f; --ink-soft: #49584f;
+    --accent: #0f6b5c; --accent-soft: #dceee9; --warn: #9a5b12; --warn-soft: #f5e6d0;
+    --line: #d9ddd7; --focus: #0f6b5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101613; --bg-raised: #161f1b; --ink: #e8ede9; --ink-soft: #a7b6ac;
+      --accent: #57d9bd; --accent-soft: #17332c; --warn: #e2ab5f; --warn-soft: #2e2416;
+      --line: #283530; --focus: #57d9bd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101613; --bg-raised: #161f1b; --ink: #e8ede9; --ink-soft: #a7b6ac;
+    --accent: #57d9bd; --accent-soft: #17332c; --warn: #e2ab5f; --warn-soft: #2e2416;
+    --line: #283530; --focus: #57d9bd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Iowan Old Style", serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .page { max-width: 700px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+  .eyebrow {
+    font-family: "IBM Plex Sans", ui-sans-serif, "Segoe UI", sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 0.8rem;
+  }
+  h1 {
+    font-family: "IBM Plex Sans", ui-sans-serif, "Segoe UI", sans-serif;
+    font-weight: 700; font-size: clamp(1.8rem, 4vw, 2.3rem);
+    line-height: 1.15; margin: 0 0 0.6rem; text-wrap: balance;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82rem; color: var(--ink-soft); margin: 0 0 1.6rem;
+  }
+  .draft-banner {
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+    border-radius: 10px; padding: 0.9rem 1.1rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.88rem; color: var(--ink); margin-bottom: 2.4rem;
+  }
+  .draft-banner strong { color: var(--warn); }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 0.45rem;
+    margin-bottom: 2.6rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line);
+  }
+  nav.toc a {
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.76rem; font-weight: 500; color: var(--ink-soft);
+    text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+  }
+  nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+  section { margin-bottom: 2.4rem; scroll-margin-top: 1.5rem; }
+  h2 {
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 1.15rem; font-weight: 600; margin: 0 0 0.8rem;
+    display: flex; gap: 0.55rem; align-items: baseline;
+  }
+  h2 .n { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.8rem; color: var(--accent); }
+  p { margin: 0 0 1rem; max-width: 62ch; }
+  ul { margin: 0 0 1rem; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; max-width: 60ch; }
+  strong { color: var(--ink); }
+  .callout {
+    background: var(--accent-soft); border-radius: 10px; padding: 0.9rem 1.1rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif; font-size: 0.88rem; margin: 1rem 0;
+  }
+  .pending { background: var(--warn-soft); color: var(--warn); border-radius: 4px; padding: 0.05rem 0.4rem; font-family: "IBM Plex Mono", monospace; font-size: 0.85em; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 1rem 0; }
+  table { width: 100%; border-collapse: collapse; font-family: "IBM Plex Sans", sans-serif; font-size: 0.85rem; background: var(--bg-raised); }
+  th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+  tbody tr:last-child td { border-bottom: none; }
+  footer {
+    border-top: 1px solid var(--line); padding-top: 1.6rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif; font-size: 0.85rem; color: var(--ink-soft);
+  }
+  footer a { color: var(--accent); }
+</style>
+</head><body>
+<div class="page">
+  <p class="eyebrow">Know Me · Medical ID. Secure.</p>
+  <h1>Política de Tratamiento de Datos Personales</h1>
+  <div class="meta">
+    <span>Versión 1.0 — vigente desde 18 de septiembre de 2026</span>
+    <span>Marco legal: Ley 1581 de 2012 (Colombia)</span>
+    <span>Contacto: <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a></span>
+  </div>
+
+  <div class="draft-banner">
+    <strong>Borrador.</strong> Documento sujeto a revisión legal antes de su publicación oficial. Los campos marcados como <span class="pending">pendiente</span> se completan con la razón social, NIT y dirección de notificación en cuanto Know Me reciba su certificado de Cámara de Comercio.
+  </div>
+
+  <nav class="toc">
+    <a href="#introduccion">Introducción</a>
+    <a href="#responsable">Responsable</a>
+    <a href="#definiciones">Definiciones</a>
+    <a href="#principios">Principios</a>
+    <a href="#datos">Datos tratados</a>
+    <a href="#finalidades">Finalidades</a>
+    <a href="#salud">Datos de salud</a>
+    <a href="#derechos">Derechos</a>
+    <a href="#pqr">Consultas y reclamos</a>
+    <a href="#transferencia">Transferencia</a>
+    <a href="#seguridad">Seguridad</a>
+    <a href="#vigencia">Vigencia</a>
+  </nav>
+
+  <section id="introduccion">
+    <h2><span class="n">01</span>Introducción y objeto</h2>
+    <p>KnowMe es un sistema de identificación médica inmediata que, mediante un código QR asociado a la dotación del trabajador, permite a terceros acceder en segundos a su perfil médico crítico —tipo de sangre, alergias, medicamentos, condiciones preexistentes, EPS y contactos de emergencia— en el momento de una emergencia laboral, junto con un asistente de inteligencia artificial y un dashboard de Seguridad y Salud en el Trabajo (SST) para las empresas clientes. KnowMe tiene en desarrollo, aún no disponible, un botón que localice centros médicos cercanos y facilite la solicitud de una ambulancia; esta Política se actualizará antes de que esa función entre en funcionamiento.</p>
+    <p>Por la naturaleza de estos datos, KnowMe trata información que la ley colombiana clasifica como dato sensible (datos de salud), lo que exige un nivel reforzado de protección y reglas claras sobre cómo se recolecta, usa, almacena y protege esa información.</p>
+    <p>Esta Política tiene por objeto informar a los titulares —trabajadores, usuarios de las empresas y ARL clientes, y demás personas naturales cuyos datos trata KnowMe— cuáles son sus derechos, cómo pueden ejercerlos y bajo qué reglas KnowMe recolecta, usa, almacena, transmite y protege sus datos personales.</p>
+    <p>Esta Política se expide en cumplimiento de:</p>
+    <ul>
+      <li>La Ley Estatutaria 1581 de 2012, por la cual se dictan disposiciones generales para la protección de datos personales.</li>
+      <li>El Decreto 1377 de 2013 (compilado en el Decreto 1074 de 2015), que reglamenta parcialmente la Ley 1581 de 2012.</li>
+      <li>La Ley Estatutaria 1266 de 2008, sobre habeas data, en lo que resulte aplicable.</li>
+      <li>Las instrucciones de la Superintendencia de Industria y Comercio (SIC), autoridad de protección de datos en Colombia.</li>
+    </ul>
+  </section>
+
+  <section id="responsable">
+    <h2><span class="n">02</span>Responsable del tratamiento</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dato</th><th>Información</th></tr></thead>
+        <tbody>
+          <tr><td>Razón social</td><td><span class="pending">pendiente</span> — en trámite ante Cámara de Comercio bajo el nombre "Know Me"</td></tr>
+          <tr><td>NIT</td><td><span class="pending">pendiente</span></td></tr>
+          <tr><td>Domicilio</td><td>Bogotá D.C., Colombia — dirección de notificación <span class="pending">pendiente</span></td></tr>
+          <tr><td>Correo de contacto</td><td><a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a></td></tr>
+          <tr><td>Teléfono</td><td><span class="pending">pendiente</span></td></tr>
+          <tr><td>Sitio web</td><td><a href="https://londonopablomartin.github.io/know-me-public/">londonopablomartin.github.io/know-me-public</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>KnowMe (o la sociedad que se constituya para operar la marca KnowMe, en adelante "KnowMe", "la Compañía" o "el Responsable") actúa como Responsable del Tratamiento de los datos que recolecta directamente de los trabajadores, empresas y ARL clientes.</p>
+    <p>Cuando una empresa o ARL suministra a KnowMe los datos de sus trabajadores para configurar los perfiles médicos, dicha empresa o ARL actúa como Responsable frente a sus trabajadores, y KnowMe actúa como Encargado del Tratamiento respecto de esos datos, procesándolos únicamente conforme a sus instrucciones y al respectivo contrato de servicio.</p>
+  </section>
+
+  <section id="definiciones">
+    <h2><span class="n">03</span>Definiciones</h2>
+    <ul>
+      <li><strong>Dato personal:</strong> información vinculada o que pueda asociarse a una o varias personas naturales determinadas o determinables.</li>
+      <li><strong>Dato sensible:</strong> dato que afecta la intimidad del titular o cuyo uso indebido puede generar discriminación; incluye los datos de salud que KnowMe trata como componente central del servicio.</li>
+      <li><strong>Titular:</strong> persona natural cuyos datos son objeto de tratamiento; principalmente, el trabajador cuyo perfil médico se registra en KnowMe.</li>
+      <li><strong>Tratamiento:</strong> cualquier operación sobre datos personales — recolección, almacenamiento, uso, circulación, consulta, actualización o supresión.</li>
+      <li><strong>Responsable del Tratamiento:</strong> quien decide sobre la base de datos y/o el tratamiento.</li>
+      <li><strong>Encargado del Tratamiento:</strong> quien trata los datos por cuenta del Responsable, siguiendo sus instrucciones.</li>
+      <li><strong>Autorización:</strong> consentimiento previo, expreso e informado del titular para el tratamiento de sus datos.</li>
+      <li><strong>Aviso de privacidad:</strong> comunicación al titular sobre la existencia de esta Política y cómo acceder a ella.</li>
+      <li><strong>RNBD:</strong> Registro Nacional de Bases de Datos, administrado por la SIC.</li>
+    </ul>
+  </section>
+
+  <section id="principios">
+    <h2><span class="n">04</span>Principios rectores</h2>
+    <p>KnowMe trata los datos personales conforme a los principios del artículo 4 de la Ley 1581 de 2012:</p>
+    <ul>
+      <li><strong>Legalidad:</strong> el tratamiento se sujeta a la ley y demás normas aplicables.</li>
+      <li><strong>Finalidad:</strong> el tratamiento obedece a una finalidad legítima, informada previamente al titular.</li>
+      <li><strong>Libertad:</strong> solo se ejerce con el consentimiento previo, expreso e informado del titular.</li>
+      <li><strong>Veracidad o calidad:</strong> la información tratada es veraz, completa, exacta, actualizada y comprobable.</li>
+      <li><strong>Transparencia:</strong> se garantiza al titular el derecho a conocer la existencia de datos que le conciernan.</li>
+      <li><strong>Acceso y circulación restringida:</strong> solo acceden a los datos las personas autorizadas por el titular o por la ley — incluido, en emergencias, quien escanea el QR para auxiliar al trabajador.</li>
+      <li><strong>Seguridad:</strong> la información se maneja con medidas técnicas, humanas y administrativas contra pérdida, uso o acceso no autorizado.</li>
+      <li><strong>Confidencialidad:</strong> todas las personas que intervienen en el tratamiento garantizan la reserva de la información, incluso tras finalizar su relación con KnowMe.</li>
+    </ul>
+  </section>
+
+  <section id="datos">
+    <h2><span class="n">05</span>Datos personales objeto de tratamiento</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Categoría</th><th>Ejemplos</th><th>Titular</th></tr></thead>
+        <tbody>
+          <tr><td>Identificación</td><td>Nombre, documento, fecha de nacimiento, cargo, empresa, sede</td><td>Trabajador</td></tr>
+          <tr><td>Contacto</td><td>Teléfono, correo, dirección</td><td>Trabajador / contacto de emergencia</td></tr>
+          <tr><td>Salud (sensible)</td><td>Tipo de sangre, alergias, medicamentos, condiciones preexistentes, EPS</td><td>Trabajador</td></tr>
+          <tr><td>Contacto de emergencia</td><td>Nombre, parentesco, teléfono</td><td>Tercero</td></tr>
+          <tr><td>Uso de la plataforma</td><td>Escaneos de QR, interacciones con el asistente de IA, accesos al dashboard</td><td>Trabajador / personal empresa-ARL</td></tr>
+          <tr><td>Cliente empresarial</td><td>Razón social, NIT, contacto comercial, plan, N.º de trabajadores</td><td>Representante empresa/ARL</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>KnowMe no recolecta datos de menores de edad de forma directa; cuando un trabajador vinculado sea menor conforme a la legislación laboral aplicable, la autorización y el registro se realizan a través de su representante legal.</p>
+    <div class="callout"><strong>Dato sensible.</strong> Los datos de salud reciben el tratamiento reforzado descrito en la Sección 7.</div>
+  </section>
+
+  <section id="finalidades">
+    <h2><span class="n">06</span>Finalidades del tratamiento</h2>
+    <ul>
+      <li>Generar y mantener actualizado el perfil médico del trabajador vinculado al QR de su dotación.</li>
+      <li>Permitir que, ante una emergencia, quien escanee el QR acceda a la información médica crítica del trabajador.</li>
+      <li>Operar el asistente de IA que guía a los compañeros de trabajo en el momento del accidente.</li>
+      <li>Poner a disposición de empresas y ARL el dashboard SST para el monitoreo agregado de su planta de personal.</li>
+      <li>Gestionar la relación contractual y de facturación con empresas y ARL.</li>
+      <li>Enviar comunicaciones relacionadas con el servicio (actualizaciones, soporte, avisos de seguridad).</li>
+      <li>Mejorar la plataforma y el asistente de IA, priorizando datos anonimizados o agregados cuando sea posible.</li>
+      <li>Cumplir obligaciones legales, contractuales, contables y fiscales, y atender a autoridades competentes.</li>
+      <li>Prevenir el fraude y proteger la seguridad de la plataforma y de los titulares.</li>
+      <li>Cuando esté disponible, procesar solicitudes de ambulancia con los datos del accidentado precargados — <strong>función en desarrollo, todavía no disponible</strong> en la aplicación.</li>
+    </ul>
+    <p>KnowMe no utiliza los datos de salud de los trabajadores para fines publicitarios ni comerciales ajenos al servicio, ni los vende ni cede a terceros distintos de los descritos en esta Política.</p>
+  </section>
+
+  <section id="salud">
+    <h2><span class="n">07</span>Tratamiento de datos sensibles de salud</h2>
+    <p>Conforme al artículo 6 de la Ley 1581 de 2012 y al artículo 2.2.2.25.2.1 del Decreto 1074 de 2015, los datos de salud son sensibles y su tratamiento está prohibido, salvo que el titular otorgue su autorización explícita, o sea necesario para salvaguardar su interés vital cuando esté físicamente incapacitado para otorgarla.</p>
+    <ul>
+      <li>KnowMe informa al trabajador, antes de recolectar sus datos de salud, que son sensibles y que no está obligado a autorizar su tratamiento.</li>
+      <li>Se informa cuáles datos son sensibles y la finalidad para la que se recolectan.</li>
+      <li>El trabajador otorga su autorización previa, expresa e informada antes de que su perfil quede disponible vía QR.</li>
+      <li>El acceso durante una emergencia se ampara en la excepción legal de salvaguarda del interés vital, y se limita a lo estrictamente necesario.</li>
+      <li>Fuera de una emergencia, el acceso está restringido al titular, a la empresa/ARL responsable (según lo autorizado) y al personal de KnowMe estrictamente necesario.</li>
+      <li>El trabajador puede revocar su autorización en cualquier momento, lo que puede implicar que su perfil deje de estar disponible vía QR, conforme al procedimiento de la Sección 9.</li>
+    </ul>
+  </section>
+
+  <section id="derechos">
+    <h2><span class="n">08</span>Derechos de los titulares</h2>
+    <p>Conforme al artículo 8 de la Ley 1581 de 2012, todo titular tiene derecho a:</p>
+    <ul>
+      <li>Conocer, actualizar y rectificar sus datos personales frente a KnowMe.</li>
+      <li>Solicitar prueba de la autorización otorgada, salvo cuando la ley no lo exija.</li>
+      <li>Ser informado sobre el uso que se le ha dado a sus datos, previa solicitud.</li>
+      <li>Presentar quejas ante la Superintendencia de Industria y Comercio, tras agotar el trámite ante KnowMe.</li>
+      <li>Revocar la autorización y/o solicitar la supresión del dato, salvo deber legal o contractual que lo impida.</li>
+      <li>Acceder gratuitamente a sus datos personales objeto de tratamiento.</li>
+    </ul>
+    <p>En caso de trabajadores fallecidos o incapacitados, estos derechos pueden ser ejercidos por sus causahabientes o representantes legales, previa acreditación de dicha calidad.</p>
+  </section>
+
+  <section id="pqr">
+    <h2><span class="n">09</span>Consultas y reclamos</h2>
+    <p><strong>Canal:</strong> las consultas y reclamos se presentan al correo <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a>, indicando nombre completo, documento de identidad, medio de contacto y descripción clara de la solicitud.</p>
+    <p><strong>Consultas</strong> (conocer los datos tratados): respuesta dentro de los 10 días hábiles siguientes al recibo. Si no es posible, se informa el motivo y la nueva fecha, que no supera 5 días hábiles adicionales.</p>
+    <p><strong>Reclamos</strong> (corregir, actualizar, suprimir o revocar): si está incompleto, se requiere subsanación dentro de 5 días; transcurridos 2 meses sin respuesta del titular, se entiende desistido. Término máximo de atención: 15 días hábiles, prorrogables 8 días hábiles adicionales si se informa el motivo.</p>
+    <p>Si el reclamo no fue debidamente atendido, el titular puede acudir a la Superintendencia de Industria y Comercio.</p>
+  </section>
+
+  <section id="transferencia">
+    <h2><span class="n">10</span>Transferencia y transmisión de datos</h2>
+    <p><strong>Transmisión:</strong> KnowMe puede transmitir datos a sus proveedores tecnológicos (hospedaje en la nube, mensajería, analítica) que actúan como Encargados, bajo contratos con las mismas obligaciones de confidencialidad y seguridad de esta Política.</p>
+    <p><strong>Transferencia:</strong> KnowMe puede transferir datos a:</p>
+    <ul>
+      <li>La empresa o ARL que contrató el plan, para el dashboard SST de su propia planta.</li>
+      <li>Autoridades judiciales, administrativas o de policía, cuando medie requerimiento legal.</li>
+      <li>Personal médico y de socorro que atienda una emergencia, en los términos de la Sección 7.</li>
+    </ul>
+    <p>Cuando la transmisión o transferencia implique el envío de datos fuera de Colombia, KnowMe verifica que el país receptor ofrezca niveles adecuados de protección, o cuenta con las garantías contractuales exigidas por la ley.</p>
+  </section>
+
+  <section id="seguridad">
+    <h2><span class="n">11</span>Seguridad de la información</h2>
+    <p>Dada la sensibilidad de los datos de salud, KnowMe implementa medidas técnicas, humanas y administrativas razonables y proporcionales:</p>
+    <ul>
+      <li>Cifrado de la información en tránsito y en reposo.</li>
+      <li>Control de acceso basado en roles; el acceso de emergencia vía QR se limita a la información médica crítica.</li>
+      <li>Autenticación para el acceso de empresas y ARL al dashboard, restringido a su propia planta.</li>
+      <li>Registro (log) de accesos y escaneos relevantes para trazabilidad y auditoría.</li>
+      <li>Copias de seguridad periódicas y planes de continuidad frente a incidentes.</li>
+      <li>Acuerdos de confidencialidad con empleados, contratistas y proveedores.</li>
+      <li>Procedimiento de gestión de incidentes, incluyendo notificación a la SIC y a los titulares afectados cuando la ley lo exija.</li>
+    </ul>
+    <p>Estas medidas se revisan y actualizan periódicamente conforme a la evolución tecnológica y regulatoria.</p>
+  </section>
+
+  <section id="vigencia">
+    <h2><span class="n">12</span>Vigencia y área responsable</h2>
+    <p>Esta Política rige desde su publicación y permanece vigente mientras KnowMe trate datos personales. Las bases de datos tendrán vigencia igual al tiempo en que se mantenga la información para las finalidades descritas, mientras subsista la relación contractual, más los plazos adicionales exigidos por normas contables, fiscales o laborales.</p>
+    <p>KnowMe se reserva el derecho de modificar esta Política. Todo cambio sustancial se comunicará a los titulares por los canales habituales antes de su entrada en vigor.</p>
+    <p>El área o persona responsable de peticiones, consultas y reclamos sobre protección de datos es <span class="pending">pendiente de asignación</span>, contactable en <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a>.</p>
+  </section>
+
+  <footer>
+    Know Me — ver también la <a href="./privacy-policy.html">Política de Privacidad</a> y los <a href="./terms-of-service.html">Términos de Servicio</a>. Documento sujeto a revisión legal antes de su publicación oficial.
+  </footer>
+</div>
+</body></html>

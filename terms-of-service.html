@@ -1,0 +1,183 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Términos de Servicio — Know Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5f4; --bg-raised: #ffffff; --ink: #16211f; --ink-soft: #49584f;
+    --accent: #0f6b5c; --accent-soft: #dceee9; --warn: #9a5b12; --warn-soft: #f5e6d0;
+    --line: #d9ddd7; --focus: #0f6b5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101613; --bg-raised: #161f1b; --ink: #e8ede9; --ink-soft: #a7b6ac;
+      --accent: #57d9bd; --accent-soft: #17332c; --warn: #e2ab5f; --warn-soft: #2e2416;
+      --line: #283530; --focus: #57d9bd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101613; --bg-raised: #161f1b; --ink: #e8ede9; --ink-soft: #a7b6ac;
+    --accent: #57d9bd; --accent-soft: #17332c; --warn: #e2ab5f; --warn-soft: #2e2416;
+    --line: #283530; --focus: #57d9bd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Iowan Old Style", serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .page { max-width: 700px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+  .eyebrow {
+    font-family: "IBM Plex Sans", ui-sans-serif, "Segoe UI", sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 0.8rem;
+  }
+  h1 {
+    font-family: "IBM Plex Sans", ui-sans-serif, "Segoe UI", sans-serif;
+    font-weight: 700; font-size: clamp(1.8rem, 4vw, 2.3rem);
+    line-height: 1.15; margin: 0 0 0.6rem; text-wrap: balance;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82rem; color: var(--ink-soft); margin: 0 0 1.6rem;
+  }
+  .draft-banner {
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+    border-radius: 10px; padding: 0.9rem 1.1rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.88rem; color: var(--ink); margin-bottom: 2.4rem;
+  }
+  .draft-banner strong { color: var(--warn); }
+  .emergency-banner {
+    background: var(--accent-soft); border-radius: 10px; padding: 1rem 1.1rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.92rem; margin-bottom: 2.4rem;
+  }
+  .emergency-banner strong { color: var(--accent); }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 0.45rem;
+    margin-bottom: 2.6rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line);
+  }
+  nav.toc a {
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 0.76rem; font-weight: 500; color: var(--ink-soft);
+    text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+  }
+  nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+  section { margin-bottom: 2.4rem; scroll-margin-top: 1.5rem; }
+  h2 {
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif;
+    font-size: 1.15rem; font-weight: 600; margin: 0 0 0.8rem;
+    display: flex; gap: 0.55rem; align-items: baseline;
+  }
+  h2 .n { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.8rem; color: var(--accent); }
+  p { margin: 0 0 1rem; max-width: 62ch; }
+  ul { margin: 0 0 1rem; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; max-width: 60ch; }
+  strong { color: var(--ink); }
+  footer {
+    border-top: 1px solid var(--line); padding-top: 1.6rem;
+    font-family: "IBM Plex Sans", ui-sans-serif, sans-serif; font-size: 0.85rem; color: var(--ink-soft);
+  }
+  footer a { color: var(--accent); }
+</style>
+</head><body>
+<div class="page">
+  <p class="eyebrow">Know Me</p>
+  <h1>Términos de Servicio</h1>
+  <div class="meta">
+    <span>Última actualización: 18 de septiembre de 2026</span>
+    <span>Contacto: <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a></span>
+  </div>
+
+  <div class="draft-banner">
+    <strong>Borrador.</strong> Este documento fue preparado como punto de partida para el lanzamiento de Know Me y todavía no ha sido revisado por un abogado. Hazlo revisar por un profesional legal en tu jurisdicción antes de publicarlo o de enviar la app a revisión de Apple/Google.
+  </div>
+
+  <div class="emergency-banner">
+    <strong>Si estás viviendo una emergencia médica ahora mismo</strong>, llama de inmediato a los servicios de emergencia de tu país (911, 123, 112, etc.). Know Me no es un servicio de emergencias ni sustituye la atención médica profesional.
+  </div>
+
+  <nav class="toc">
+    <a href="#aceptacion">Aceptación</a>
+    <a href="#servicio">El servicio</a>
+    <a href="#elegibilidad">Elegibilidad</a>
+    <a href="#cuenta">Tu cuenta</a>
+    <a href="#asistente">El asistente de salud</a>
+    <a href="#qr">El código QR</a>
+    <a href="#empresa">Cuentas Empresa</a>
+    <a href="#terminacion">Terminación</a>
+    <a href="#responsabilidad">Responsabilidad</a>
+    <a href="#ley">Ley aplicable</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <section id="aceptacion">
+    <h2><span class="n">01</span>Aceptación de estos términos</h2>
+    <p>Al crear una cuenta y usar Know Me, aceptas estos Términos de Servicio y nuestra <a href="./privacy-policy.html">Política de Privacidad</a>. Si no estás de acuerdo, no uses la aplicación.</p>
+  </section>
+
+  <section id="servicio">
+    <h2><span class="n">02</span>Descripción del servicio</h2>
+    <p>Know Me permite a personas guardar información médica de emergencia y compartirla mediante un código QR, y a empresas verificar su identidad para operar en la plataforma. También ofrece un asistente virtual de orientación en salud.</p>
+  </section>
+
+  <section id="elegibilidad">
+    <h2><span class="n">03</span>Elegibilidad</h2>
+    <p>Know Me está destinada a personas mayores de <strong>18 años</strong>. Al crear una cuenta, declaras que cumples con este requisito.</p>
+  </section>
+
+  <section id="cuenta">
+    <h2><span class="n">04</span>Tu cuenta y tu responsabilidad</h2>
+    <ul>
+      <li>Eres responsable de que la información médica y de contacto que registres sea precisa — de eso depende que sea útil en una emergencia real.</li>
+      <li>Eres responsable de mantener segura tu contraseña y tu sesión.</li>
+      <li>Puedes eliminar tu cuenta y todos tus datos en cualquier momento desde la app.</li>
+    </ul>
+  </section>
+
+  <section id="asistente">
+    <h2><span class="n">05</span>El asistente de salud no es un servicio médico</h2>
+    <p>El asistente de salud da orientación general y no reemplaza a un profesional de la salud. No diagnostica, no prescribe tratamientos ni medicamentos, y sus respuestas pueden no aplicar a tu situación particular. Ante cualquier emergencia, contacta de inmediato a los servicios de emergencia de tu país.</p>
+  </section>
+
+  <section id="qr">
+    <h2><span class="n">06</span>El código QR — uso y riesgos</h2>
+    <p>Tu código QR, una vez escaneado, muestra tu ficha médica a quien lo escanee — esa es su función, incluso desde la cámara de cualquier dispositivo, sin necesidad de tener la app instalada. Eres responsable de a quién le muestras o compartes tu código fuera de una emergencia real. Como las tarjetas físicas se mandan a fabricar, si crees que alguien más tiene tu código no se regenera de inmediato: debes enviar una solicitud con el motivo, que tu empresa (o Know Me, si eres independiente) revisa antes de emitir uno nuevo.</p>
+  </section>
+
+  <section id="empresa">
+    <h2><span class="n">07</span>Cuentas de tipo Empresa</h2>
+    <p>Las cuentas Empresa pasan por un proceso de verificación manual. Know Me puede rechazar, suspender o solicitar información adicional a cualquier cuenta Empresa que no pueda verificar como una entidad legítima.</p>
+  </section>
+
+  <section id="terminacion">
+    <h2><span class="n">08</span>Terminación</h2>
+    <p>Puedes dejar de usar Know Me y eliminar tu cuenta cuando quieras. Podemos suspender o cerrar cuentas que violen estos términos, incluyendo el uso indebido del código QR o del asistente de salud.</p>
+  </section>
+
+  <section id="responsabilidad">
+    <h2><span class="n">09</span>Limitación de responsabilidad</h2>
+    <p>Know Me se ofrece "tal cual". En la medida permitida por la ley, no somos responsables por decisiones médicas tomadas con base en la información mostrada en la app o en las respuestas del asistente de salud. La app es una herramienta de apoyo, no un sustituto de juicio médico profesional ni de los servicios de emergencia.</p>
+  </section>
+
+  <section id="ley">
+    <h2><span class="n">10</span>Ley aplicable</h2>
+    <p>Estos términos se rigen por las leyes de Colombia, sin perjuicio de los derechos que la ley local del usuario le reconozca de forma imperativa.</p>
+  </section>
+
+  <section id="contacto">
+    <h2><span class="n">11</span>Contacto</h2>
+    <p>¿Preguntas sobre estos términos? Escríbenos a <a href="mailto:soporteknowme@gmail.com">soporteknowme@gmail.com</a>.</p>
+  </section>
+
+  <footer>
+    Know Me — ver también la <a href="./privacy-policy.html">Política de Privacidad</a> y la <a href="./data-treatment-policy.html">Política de Tratamiento de Datos Personales</a>.
+  </footer>
+</div>
+</body></html>

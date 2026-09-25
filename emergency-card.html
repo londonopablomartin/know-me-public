@@ -151,28 +151,28 @@
         var lon = pos.coords.longitude;
         statusEl.textContent = 'Buscando hospitales cerca de ti…';
 
-        var query = '[out:json][timeout:12];(' +
-          'node["amenity"="hospital"](around:5000,' + lat + ',' + lon + ');' +
-          'way["amenity"="hospital"](around:5000,' + lat + ',' + lon + ');' +
-          'node["amenity"="clinic"](around:5000,' + lat + ',' + lon + ');' +
-          ');out center 20;';
-
-        fetch('https://overpass-api.de/api/interpreter', {
+        fetch(SUPABASE_URL + '/functions/v1/nearby-hospitals', {
           method: 'POST',
-          body: 'data=' + encodeURIComponent(query),
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': 'Bearer ' + ANON_KEY,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ lat: lat, lon: lon, radius: 5000 }),
         })
           .then(function (r) { return r.json(); })
           .then(function (data) {
-            var els = (data && data.elements) || [];
+            var items = (data && data.hospitals) || [];
             var results = [];
-            for (var i = 0; i < els.length; i++) {
-              var el = els[i];
-              var tags = el.tags || {};
-              if (!tags.name) continue;
-              var hLat = el.lat != null ? el.lat : (el.center && el.center.lat);
-              var hLon = el.lon != null ? el.lon : (el.center && el.center.lon);
-              if (hLat == null || hLon == null) continue;
-              results.push({ name: tags.name, lat: hLat, lon: hLon, dist: distanceMeters(lat, lon, hLat, hLon) });
+            for (var i = 0; i < items.length; i++) {
+              var h = items[i];
+              if (!h.name || h.lat == null || h.lon == null) continue;
+              results.push({
+                name: h.name,
+                lat: h.lat,
+                lon: h.lon,
+                dist: h.distance_meters != null ? h.distance_meters : distanceMeters(lat, lon, h.lat, h.lon),
+              });
             }
             results.sort(function (a, b) { return a.dist - b.dist; });
             results = results.slice(0, 8);

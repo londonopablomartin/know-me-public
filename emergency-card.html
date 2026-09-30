@@ -115,7 +115,12 @@
                 escapeHtml(c.phone) + '</a></div></div>';
             }).join('');
 
+        var nameHtml = (data && data.full_name)
+          ? '<h1 style="font-size:20px;margin:0 0 14px;">' + escapeHtml(data.full_name) + '</h1>'
+          : '';
+
         render(
+          nameHtml +
           '<div class="warning">Esta ficha no reemplaza atención médica profesional. Ante una emergencia, contacta primero a los servicios de emergencia de tu país.</div>' +
           '<div class="card"><div class="label">Tipo de sangre</div><div class="blood">' + escapeHtml((data && data.blood_type) || 'No especificado') + '</div></div>' +
           '<div class="card"><div class="label">Alergias</div>' + chipList(data && data.allergies) + '</div>' +

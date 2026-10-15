@@ -186,7 +186,10 @@
         );
       })
       .catch(function () {
-        render('<div class="center">No se pudo cargar la información. Intenta de nuevo.</div>');
+        render(
+          '<div class="center"><p>No se pudo cargar la ficha. Revisa tu conexión a internet e intenta de nuevo.</p>' +
+          '<p style="margin-top:12px">Si es una emergencia, no esperes: llama al 123.</p></div>'
+        );
       });
   }
 

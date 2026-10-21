@@ -70,7 +70,7 @@
       else if (i <= 27) db.persona_profiles.push({ user_id: u.id, full_name: nm, blood_type: BLOODS[i % 6], allergies: [], conditions: [], medications: [], updated_at: daysAgo(210), health_data_consent_at: daysAgo(215) });
       else db.persona_profiles.push({ user_id: u.id, full_name: nm, blood_type: null, allergies: [], conditions: [], medications: [], updated_at: daysAgo(2), health_data_consent_at: null });
       if (i <= 27) db.emergency_contacts.push({ id: uuid(), persona_id: u.id, full_name: 'Contacto de ' + nm.split(' ')[0], phone: '300' + String(1000000 + i), relationship: 'Familiar' });
-      addToken(u.id, i <= 27);
+      addToken(u.id, false);
       db.empresa_employee_roster.push({ id: uuid(), empresa_id: emp.id, full_name: nm, email: em, matched_persona_id: i <= 28 ? u.id : null, matched_at: i <= 28 ? daysAgo(30 - i) : null, created_at: daysAgo(39), sede_name: sd });
       if (i <= 28) db.empresa_employees.push({ id: uuid(), empresa_id: emp.id, persona_id: u.id, joined_at: daysAgo(30 - i), sede_id: sedeIds[sd] });
       if (i === 4 || i === 8) db.qr_regeneration_requests.push({ id: uuid(), persona_id: u.id, reason: i === 4 ? 'Perdí mi tarjeta' : 'Se dañó en el lavado', reviewer_type: 'empresa', empresa_id: emp.id, status: 'pending', approval_token: null, reviewed_at: null, created_at: daysAgo(1) });
@@ -157,17 +157,29 @@
       return db.qr_regeneration_requests.filter(function (r) { return r.empresa_id === uid && r.status === 'pending'; }).sort(function (a, b) { return a.created_at < b.created_at ? -1 : 1; })
         .map(function (r) { var p = profileOf(r.persona_id); return { id: r.id, persona_full_name: p && p.full_name, reason: r.reason, created_at: r.created_at }; });
     },
-    get_empresa_qr_codes: function (uid) {
-      return db.empresa_employees.filter(function (e) { return e.empresa_id === uid && profileOf(e.persona_id) && activeToken(e.persona_id); })
-        .map(function (e) { var sede = db.empresa_sedes.filter(function (s) { return s.id === e.sede_id; })[0]; return { persona_id: e.persona_id, full_name: profileOf(e.persona_id).full_name, sede_name: sede ? sede.name : null, token: activeToken(e.persona_id).token, ficha_completa: isComplete(e.persona_id) }; })
-        .sort(function (a, b) { return (a.sede_name || '~') + a.full_name < (b.sede_name || '~') + b.full_name ? -1 : 1; });
+    get_empresa_print_status: function (uid) {
+      var ep = db.empresa_profiles.filter(function (e) { return e.user_id === uid; })[0];
+      var pending = 0, sent = 0, incomplete = 0;
+      db.empresa_employees.filter(function (e) { return e.empresa_id === uid && profileOf(e.persona_id); }).forEach(function (e) {
+        if (!isComplete(e.persona_id)) { incomplete++; return; }
+        var t = activeToken(e.persona_id);
+        if (!t) return;
+        if (t.print_notified_at) sent++; else pending++;
+      });
+      return { pending: pending, sent: sent, incomplete: incomplete, last_sent_at: ep ? ep.qr_pdf_updated_at : null };
+    },
+    get_or_create_my_qr_token: function (uid) {
+      if (!uid) return { error: 'not_authenticated' };
+      var t = activeToken(uid), created = false;
+      if (!t) { t = { id: uuid(), persona_id: uid, token: hex(64), created_at: nowIso(), expires_at: null, revoked_at: null, print_notified_at: null }; db.qr_tokens.push(t); created = true; }
+      return { id: t.id, persona_id: t.persona_id, token: t.token, created_at: t.created_at, print_notified_at: t.print_notified_at, created: created };
     },
     request_qr_regeneration: function (uid, a) {
       var reason = String(a.p_reason || '').trim().slice(0, 500);
       if (!reason) return { error: 'reason_required' };
-      var l = empresaOf(uid), r = { id: uuid(), persona_id: uid, reason: reason, reviewer_type: l ? 'empresa' : 'knowme', empresa_id: l ? l.empresa_id : null, status: 'pending', approval_token: l ? null : hex(64), reviewed_at: null, created_at: nowIso() };
+      var l = empresaOf(uid), r = { id: uuid(), persona_id: uid, reason: reason, reviewer_type: l ? 'empresa' : 'knowme', empresa_id: l ? l.empresa_id : null, status: 'pending', approval_token: null, reviewed_at: null, created_at: nowIso() };
       db.qr_regeneration_requests.push(r);
-      return { request_id: r.id, reviewer_type: r.reviewer_type, approval_token: r.approval_token };
+      return { request_id: r.id, reviewer_type: r.reviewer_type };
     },
     get_my_qr_requests: function (uid) {
       return db.qr_regeneration_requests.filter(function (r) { return r.persona_id === uid; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; })
@@ -209,6 +221,7 @@
       return [200, { hospitals: out }];
     },
     'notify-qr-print': function (uid, body) {
+      if (empresaOf(uid)) return [200, { ok: true, deferred_to_empresa_batch: true }];
       var t = db.qr_tokens.filter(function (x) { return x.persona_id === uid && x.token === (body && body.token); })[0];
       if (!t) return [404, { error: 'token_not_found' }];
       if (t.print_notified_at) return [200, { ok: true, already_notified: true }];
@@ -216,6 +229,15 @@
       t.print_notified_at = nowIso(); save(); return [200, { ok: true }];
     },
     'notify-qr-regeneration-request': function () { return [200, { ok: true }]; },
+    'send-empresa-print-batch': function (uid) {
+      var ep = db.empresa_profiles.filter(function (e) { return e.user_id === uid; })[0];
+      if (!ep) return [403, { error: 'not_empresa' }];
+      var rows = db.empresa_employees.filter(function (e) { return e.empresa_id === uid && profileOf(e.persona_id) && isComplete(e.persona_id) && activeToken(e.persona_id) && !activeToken(e.persona_id).print_notified_at; });
+      if (!rows.length) return [409, { error: 'nothing_to_print' }];
+      rows.forEach(function (e) { activeToken(e.persona_id).print_notified_at = nowIso(); });
+      ep.qr_pdf_updated_at = nowIso(); save();
+      return [200, { ok: true, sent: rows.length, remaining: 0 }];
+    },
     'process-arl-document': function (uid, body) { var d = db.arl_documents.filter(function (x) { return x.id === (body && body.document_id); })[0]; if (d) { d.status = 'ready'; save(); } return [200, { ok: true, chunk_count: 12 }]; },
     'review-qr-regeneration': function (uid, body) {
       var r = db.qr_regeneration_requests.filter(function (x) { return x.id === (body && body.request_id); })[0];
@@ -228,8 +250,10 @@
       } else r.status = 'rejected';
       save(); return [200, { ok: true }];
     },
-    'delete-account': function (uid) {
+    'delete-account': function (uid, body) {
       if (!uid) return [401, { error: 'invalid_session' }];
+      var who = userById(uid);
+      if (who && (!body || body.password !== who.password)) return [403, { error: body && body.password ? 'wrong_password' : 'password_required' }];
       var ids = db.qr_tokens.filter(function (t) { return t.persona_id === uid; }).map(function (t) { return t.id; });
       ['persona_profiles'].forEach(function (k) { db[k] = db[k].filter(function (r) { return r.user_id !== uid; }); });
       db.emergency_contacts = db.emergency_contacts.filter(function (r) { return r.persona_id !== uid; });

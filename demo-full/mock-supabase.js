@@ -250,6 +250,9 @@
       } else r.status = 'rejected';
       save(); return [200, { ok: true }];
     },
+    'request-password-reset': function (uid, body) {
+      return [200, { ok: true }];
+    },
     'delete-account': function (uid, body) {
       if (!uid) return [401, { error: 'invalid_session' }];
       var who = userById(uid);

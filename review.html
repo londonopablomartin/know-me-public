@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Revisar solicitud · Know Me</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f3f5f4;color:#16211f;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0;padding:24px;text-align:center}
+  .card{background:#fff;border-radius:16px;padding:32px;max-width:440px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .bar{background:#0f6b5c;color:#fff;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;display:inline-block;margin-bottom:16px}
+  h1{font-size:20px;margin:0 0 8px}
+  p{line-height:1.5;margin:8px 0}
+  button{margin-top:16px;border:0;border-radius:12px;padding:14px 28px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;min-height:48px}
+  button.approve{background:#0f6b5c}
+  button.reject{background:#9a5b12}
+  button:disabled{opacity:.6;cursor:default}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="bar">Know Me</div>
+    <h1 id="title">Revisar solicitud</h1>
+    <p id="msg">Cargando…</p>
+    <button id="go" type="button" hidden></button>
+  </div>
+<script>
+  // Los enlaces del correo abren esta página y NO cambian nada: la decisión solo se
+  // envía cuando alguien pulsa el botón (así un escáner de correo no aprueba solo).
+  var FUNCTION_URL = 'https://povrmihhykldhelqymvo.supabase.co/functions/v1/review-qr-regeneration';
+  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  var MESSAGES = {
+    approved: '✅ Solicitud aprobada. Se generó el nuevo código y se avisó al equipo de impresión.',
+    approved_no_print: 'Se aprobó la solicitud, pero no se pudo avisar a impresión. Avisa al equipo técnico.',
+    rejected: 'Solicitud rechazada. El código actual de la persona sigue vigente.',
+    already_approved: 'Esta solicitud ya fue aprobada anteriormente.',
+    already_rejected: 'Esta solicitud ya fue rechazada anteriormente.',
+    already_done: 'Esta solicitud ya fue revisada.',
+    expired: 'Esta solicitud venció. Pide que la envíen de nuevo desde la app.',
+    unauthorized: 'No autorizado para revisar esta solicitud.',
+    not_found: 'Esta solicitud no existe.',
+    invalid: 'El enlace no es válido.',
+    config: 'Error de configuración del servidor.',
+    error: 'Ocurrió un error. Intenta de nuevo o avisa al equipo técnico.'
+  };
+  var p = new URLSearchParams(location.search);
+  var id = p.get('request_id') || '', action = p.get('action') || '', token = p.get('token') || '';
+  var msg = document.getElementById('msg'), btn = document.getElementById('go'), title = document.getElementById('title');
+
+  if (!UUID.test(id) || (action !== 'approve' && action !== 'reject') || !token) {
+    title.textContent = 'Enlace no válido';
+    msg.textContent = MESSAGES.invalid;
+  } else {
+    var approve = action === 'approve';
+    title.textContent = approve ? 'Aprobar nuevo código QR' : 'Rechazar solicitud de nuevo código';
+    msg.textContent = approve
+      ? 'Al aprobar, el código actual de la persona queda anulado y se manda a imprimir una tarjeta nueva.'
+      : 'Al rechazar, el código actual de la persona sigue vigente.';
+    btn.textContent = approve ? 'Confirmar aprobación' : 'Confirmar rechazo';
+    btn.className = approve ? 'approve' : 'reject';
+    btn.hidden = false;
+    btn.addEventListener('click', function () {
+      btn.disabled = true;
+      btn.textContent = 'Enviando…';
+      fetch(FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ request_id: id, action: action, token: token })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          btn.hidden = true;
+          title.textContent = d && d.ok ? 'Listo' : 'No se pudo completar';
+          msg.textContent = MESSAGES[d && d.code] || MESSAGES.error;
+        })
+        .catch(function () {
+          btn.hidden = true;
+          title.textContent = 'No se pudo completar';
+          msg.textContent = MESSAGES.error;
+        });
+    });
+  }
+</script>
+</body>
+</html>

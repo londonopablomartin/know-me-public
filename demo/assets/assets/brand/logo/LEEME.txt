@@ -1,9 +1,15 @@
 Logo de Know Me (escudo con medusa y la palabra «knowMe»), el registrado ante la
-Superintendencia de Industria y Comercio.
+Superintendencia de Industria y Comercio (SIC).
 
-knowme-logo.png  -> PROVISIONAL: es una captura de 198 x 120 px. Se ve bien por debajo
-                    de ~48 px de alto, pero se pixela mas grande. Hay que reemplazarlo por
-                    el archivo original (vectorial SVG/PDF/AI o PNG de al menos 2000 px de
-                    ancho con fondo transparente), con el MISMO nombre de archivo.
+knowme-logo.svg     Logo completo en vector, fondo transparente (el que usa la app).
+knowme-symbol.svg   Solo el escudo con la medusa.
+knowme-logo.png     El logo completo en PNG de 2400 px, fondo transparente.
 
-No se redibuja ni se modifica el logo: se usa tal cual fue registrado.
+ORIGEN: el unico archivo disponible del logo era una captura de 198 x 120 px. Estos vectores
+se RECONSTRUYERON a partir de ella (contornos medidos sobre la imagen, colores muestreados de
+ella, esquinas recuperadas por deconvolucion), no los dibujo un disenador. A tamano normal son
+practicamente identicos a la original, pero si aparece el archivo original del disenador
+(SVG/AI/PDF), debe reemplazar a estos con los mismos nombres de archivo.
+
+El generador esta en docs/brand/reconstruccion/ (scripts de Python).
+No se modifica el diseno: escudo, medusa, tentaculos y palabra se conservan tal cual.

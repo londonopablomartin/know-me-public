@@ -9,15 +9,15 @@
 <title>Ficha de emergencia — Know Me</title>
 <style>
   :root {
-    --bg: #0B1220; --card: #121A2B; --chip: #1C2842; --text: #F1F5F9; --muted: #94A3B8; --line: #273449;
+    --bg: #0C1527; --card: #14203A; --chip: #223256; --text: #EAF0F8; --muted: #9AA8C2; --line: #2A3A5C;
     --sos: #DC2626; --onsos: #FFFFFF;
-    --call: #2DD4C7; --oncall: #0B1220;
-    --amber: #FBBF24; --onamber: #0B1220;
+    --call: #35C0C3; --oncall: #0C1527;
+    --amber: #FBBF24; --onamber: #0C1527;
   }
   @media (prefers-color-scheme: light) {
     :root {
-      --bg: #F8FAFC; --card: #FFFFFF; --chip: #E2E8F0; --text: #0F172A; --muted: #475569; --line: #CBD5E1;
-      --call: #00847A; --oncall: #FFFFFF;
+      --bg: #FFFFFF; --card: #F4F7FA; --chip: #E1E7F0; --text: #1F2A44; --muted: #4A5670; --line: #D5DCE8;
+      --call: #0E7F86; --oncall: #FFFFFF;
       --amber: #B45309; --onamber: #FFFFFF;
     }
   }
@@ -28,7 +28,8 @@
     font-size: 18px; line-height: 1.45;
   }
   .bar { display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--line); }
-  .bar svg { width: 32px; height: 32px; flex: none; }
+  .bar img { height: 48px; width: auto; flex: none; border-radius: 8px; }
+  @media (prefers-color-scheme: dark) { .bar img { background: #fff; padding: 3px; } }
   .brand { font-weight: 700; font-size: 18px; line-height: 1.1; }
   .sub { font-size: 14px; color: var(--muted); }
   .page { max-width: 520px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
@@ -81,17 +82,8 @@
 </head>
 <body>
   <header class="bar">
-    <svg viewBox="0 0 120 120" aria-hidden="true">
-      <defs>
-        <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="11" y1="11" x2="105" y2="105">
-          <stop offset="0" stop-color="#FF5470"/><stop offset="1" stop-color="#E11D48"/>
-        </linearGradient>
-      </defs>
-      <line x1="72" y1="72" x2="99" y2="99" stroke="url(#g)" stroke-width="12"/>
-      <circle cx="99" cy="99" r="6" fill="url(#g)"/>
-      <circle cx="48" cy="48" r="32" fill="none" stroke="url(#g)" stroke-width="10"/>
-    </svg>
-    <div><div class="brand">Know Me</div><div class="sub">Ficha de emergencia</div></div>
+    <img src="brand/knowme-logo.png" alt="Know Me" width="79" height="48">
+    <div class="sub">Ficha de emergencia</div>
   </header>
   <main class="page">
     <div id="who"></div>

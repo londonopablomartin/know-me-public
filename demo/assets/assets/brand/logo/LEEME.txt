@@ -1,0 +1,9 @@
+Logo de Know Me (escudo con medusa y la palabra «knowMe»), el registrado ante la
+Superintendencia de Industria y Comercio.
+
+knowme-logo.png  -> PROVISIONAL: es una captura de 198 x 120 px. Se ve bien por debajo
+                    de ~48 px de alto, pero se pixela mas grande. Hay que reemplazarlo por
+                    el archivo original (vectorial SVG/PDF/AI o PNG de al menos 2000 px de
+                    ancho con fondo transparente), con el MISMO nombre de archivo.
+
+No se redibuja ni se modifica el logo: se usa tal cual fue registrado.

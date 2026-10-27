@@ -57865,7 +57865,7 @@ B.b.E(r,i)}i=A.dR(16)
 q=g!=null?A.aZV(g,3):m
 p=n.w
 p=A.ab(p==null?m:p.h(0,"token"))
-r.push(A.e5(m,new A.JK("https://ficha.knowme.services/ficha.html?token="+(p==null?"":p),240,m),B.u,m,m,new A.dp(B.k,m,q,i,m,m,B.aw),m,m,m,B.bX,m,m,m))
+r.push(A.e5(m,new A.JK("https://ficha.knowme.services/emergency-card.html?token="+(p==null?"":p),240,m),B.u,m,m,new A.dp(B.k,m,q,i,m,m,B.aw),m,m,m,B.bX,m,m,m))
 if(!n.Q){i=t.RO
 q=t.wd
 p=q.a(A.z(a).c.h(0,A.bu(i))).b.qE(0.12)

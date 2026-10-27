@@ -38,7 +38,7 @@
     if (extra) for (var k in extra) headers[k] = extra[k];
     return new Response(status === 204 ? null : JSON.stringify(data), { status: status || 200, headers: headers });
   }
-  function pgError(code, message, status) { return json({ code: code, message: message, details: null, hint: null }, status || 400); }
+  function pgError(code, message, status, hint) { return json({ code: code, message: message, details: null, hint: hint || null }, status || 400); }
 
   /* ───────── base de datos ficticia ───────── */
   var FIRSTS = ['Camila', 'Andrés', 'Valentina', 'Santiago', 'Daniela', 'Mateo', 'Laura', 'Sebastián', 'Natalia', 'Julián', 'Carolina', 'David', 'Paula', 'Felipe', 'Mariana'];
@@ -101,7 +101,32 @@
   function isComplete(id) {
     var p = profileOf(id);
     if (!p || !(p.full_name || '').trim() || !p.health_data_consent_at) return false;
+    if (p.is_minor && (!p.guardian_authorized_at || !isMinorDate(p.minor_birth_date))) return false;
     return db.emergency_contacts.some(function (c) { return c.persona_id === id && (c.phone || '').trim(); });
+  }
+  /* Menores de edad (migración 0025): la misma regla que la base real. */
+  function isMinorDate(birth) {
+    var b = new Date(birth), limit = new Date();
+    limit.setFullYear(limit.getFullYear() - 18);
+    return !isNaN(b) && b <= new Date() && b > limit;
+  }
+  function minorAge(birth) {
+    var b = new Date(birth), n = new Date(), age = n.getFullYear() - b.getFullYear();
+    if (n.getMonth() < b.getMonth() || (n.getMonth() === b.getMonth() && n.getDate() < b.getDate())) age--;
+    return age;
+  }
+  /* Devuelve una respuesta de error si la ficha no cumple, o null (y la deja sellada). */
+  function minorRules(item, existing) {
+    var clear = ['minor_birth_date', 'guardian_name', 'guardian_relationship', 'guardian_authorized_at', 'guardian_authorization_version'];
+    if (!item.is_minor) { clear.forEach(function (k) { item[k] = null; }); return null; }
+    if (!isMinorDate(item.minor_birth_date)) return pgError('22023', 'La fecha de nacimiento debe ser la de una persona menor de 18 años.', 400, 'minor_birth_date_invalid');
+    if (String(item.guardian_name || '').trim().length < 3 || !item.guardian_relationship) return pgError('22023', 'Faltan el nombre y el parentesco del representante legal.', 400, 'guardian_data_required');
+    if (!String(item.guardian_authorization_version || '').trim()) return pgError('22023', 'La ficha de un menor necesita la autorización de su representante legal.', 400, 'guardian_authorization_required');
+    if (empresaOf(item.user_id)) return pgError('22023', 'Una ficha de menor de edad no puede estar vinculada a una empresa.', 400, 'minor_linked_to_empresa');
+    var same = existing && existing.is_minor && existing.guardian_authorized_at && existing.guardian_authorization_version === item.guardian_authorization_version;
+    item.guardian_authorized_at = same ? existing.guardian_authorized_at : nowIso();
+    item.health_data_consent_at = item.guardian_authorized_at;
+    return null;
   }
   function activeToken(pid) { return db.qr_tokens.filter(function (t) { return t.persona_id === pid && !t.revoked_at; }).sort(function (a, b) { return b.created_at < a.created_at ? -1 : 1; })[0]; }
   function empresaOf(pid) { return db.empresa_employees.filter(function (e) { return e.persona_id === pid; })[0]; }
@@ -136,6 +161,8 @@
       var roster = db.empresa_employee_roster.filter(function (r) { return r.empresa_id === ep.user_id && r.email.toLowerCase() === email && !r.matched_persona_id; })[0];
       var sedeId = null;
       if (roster && roster.sede_name) { var s = db.empresa_sedes.filter(function (x) { return x.empresa_id === ep.user_id && x.name.toLowerCase() === roster.sede_name.toLowerCase(); })[0]; if (s) sedeId = s.id; }
+      var kid = profileOf(uid);
+      if (kid && kid.is_minor) return { __pg: { code: '22023', message: 'Una ficha de menor de edad no puede estar vinculada a una empresa.', hint: 'minor_linked_to_empresa' } };
       var existing = empresaOf(uid);
       if (existing) { existing.empresa_id = ep.user_id; existing.joined_at = nowIso(); existing.sede_id = sedeId || existing.sede_id; }
       else db.empresa_employees.push({ id: uuid(), empresa_id: ep.user_id, persona_id: uid, joined_at: nowIso(), sede_id: sedeId });
@@ -191,7 +218,7 @@
       if (t.revoked_at) return { error: 'revoked' };
       var p = profileOf(t.persona_id) || {};
       db.access_log.push({ qr_token_id: t.id, accessed_at: nowIso() });
-      return { full_name: p.full_name, blood_type: p.blood_type, allergies: p.allergies || [], conditions: p.conditions || [], medications: p.medications || [],
+      return { full_name: p.is_minor ? String(p.full_name || '').trim().split(' ')[0] : p.full_name, is_minor: !!p.is_minor, age_years: p.is_minor ? minorAge(p.minor_birth_date) : null, blood_type: p.blood_type, allergies: p.allergies || [], conditions: p.conditions || [], medications: p.medications || [],
         contacts: db.emergency_contacts.filter(function (c) { return c.persona_id === t.persona_id; }).map(function (c) { return { full_name: c.full_name, phone: c.phone, relationship: c.relationship }; }) };
     }
   };
@@ -214,12 +241,6 @@
   }
   var FUNCTIONS = {
     'claude-proxy': function (uid, body) { if (!uid) return [401, { error: 'not_authenticated' }]; return [200, { reply: chatReply((body && body.messages) || []) }]; },
-    'nearby-hospitals': function (uid, body) {
-      var lat = (body && body.lat) || 4.711, lon = (body && body.lon) || -74.0721, out = [];
-      var offs = [[0.004, 0.003, 520], [-0.006, 0.005, 980], [0.009, -0.004, 1450], [-0.011, -0.008, 2100], [0.015, 0.012, 2900]];
-      offs.forEach(function (o, i) { out.push({ name: 'Centro médico de ejemplo ' + String.fromCharCode(65 + i), lat: lat + o[0], lon: lon + o[1], distance_meters: o[2], phone: '601' + String(2000000 + i * 1234) }); });
-      return [200, { hospitals: out }];
-    },
     'notify-qr-print': function (uid, body) {
       if (empresaOf(uid)) return [200, { ok: true, deferred_to_empresa_batch: true }];
       var t = db.qr_tokens.filter(function (x) { return x.persona_id === uid && x.token === (body && body.token); })[0];
@@ -338,6 +359,12 @@
         var existing = rows.filter(function (r) { return cols.every(function (c) { return String(r[c]).toLowerCase() === String(item[c]).toLowerCase(); }); })[0];
         if (table === 'qr_tokens' && !item.revoked_at && rows.some(function (r) { return r.persona_id === item.persona_id && !r.revoked_at; })) return pgError('23505', 'duplicate key value violates unique constraint "qr_tokens_one_active_per_persona"', 409);
         if (table === 'empresa_sedes' && rows.some(function (r) { return r.empresa_id === item.empresa_id && r.name.toLowerCase() === item.name.toLowerCase(); })) return pgError('23505', 'duplicate key value violates unique constraint "empresa_sedes_empresa_id_name_key"', 409);
+        if (table === 'persona_profiles') {
+          var merged = existing ? Object.assign({}, existing, items[i]) : item;
+          var minorErr = minorRules(merged, existing);
+          if (minorErr) return minorErr;
+          items[i] = merged; item = merged;
+        }
         if (existing) {
           if (!merge) return pgError('23505', 'duplicate key value violates unique constraint "' + table + '_pkey"', 409);
           Object.keys(items[i]).forEach(function (k) { existing[k] = items[i][k]; }); created.push(existing);
@@ -408,7 +435,9 @@
       var fn = RPC[m[1]]; if (!fn) return pgError('PGRST202', 'función ' + m[1] + ' no existe', 404);
       var pub = m[1] === 'resolve_emergency_qr';
       if (!pub && !uid) return pgError('42501', 'permission denied for function ' + m[1], 401);
-      var res = fn(uid, JSON.parse(bodyText || '{}')); save(); return json(res === undefined ? null : res);
+      var res = fn(uid, JSON.parse(bodyText || '{}'));
+      if (res && res.__pg) return pgError(res.__pg.code, res.__pg.message, 400, res.__pg.hint);
+      save(); return json(res === undefined ? null : res);
     }
     if ((m = path.match(/^\/rest\/v1\/([a-z_]+)$/))) {
       if (!uid) return pgError('42501', 'permission denied for table ' + m[1], 401);
@@ -434,10 +463,20 @@
     return json({ message: 'ruta no soportada en la demo: ' + path }, 404);
   }
 
+  /* Hospitales cercanos: se consultan de verdad, con la misma función del
+     servidor que usa la app real, para que la demostración muestre los de la
+     ubicación de quien la prueba. Si falla, se informa; no se inventan. */
+  var HOSPITALS_URL = 'https://povrmihhykldhelqymvo.supabase.co/functions/v1/nearby-hospitals';
+  function nearbyHospitals(init) {
+    return realFetch(HOSPITALS_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: readBody(init) })
+      .catch(function () { return json({ error: 'hospitals_unavailable' }, 502); });
+  }
+
   window.fetch = function (input, init) {
     var url = typeof input === 'string' ? input : (input && input.url) || String(input);
     var host; try { host = new URL(url).hostname; } catch (e) { host = ''; }
     if (host !== DEMO_HOST) return realFetch(input, init);
+    if (/\/functions\/v1\/nearby-hospitals$/.test(new URL(url).pathname)) return nearbyHospitals(init);
     var method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
     return new Promise(function (resolve) {
       setTimeout(function () {

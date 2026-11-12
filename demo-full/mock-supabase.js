@@ -10,7 +10,7 @@
  */
 (function () {
   var DEMO_HOST = 'demo.invalid';
-  var DB_KEY = 'km_demo_db_v1';
+  var DB_KEY = 'km_demo_db_v2';
   var DEMO_PASSWORD = 'demo1234';
   var realFetch = window.fetch.bind(window);
 
@@ -47,7 +47,7 @@
   var BLOODS = ['O+', 'A+', 'B+', 'O-', 'AB+', 'A-'];
 
   function seed() {
-    var db = { users: [], app_users: [], persona_profiles: [], emergency_contacts: [], qr_tokens: [], empresa_profiles: [], empresa_employees: [], empresa_employee_roster: [], empresa_sedes: [], arl_documents: [], qr_regeneration_requests: [], access_log: [] };
+    var db = { users: [], app_users: [], persona_profiles: [], emergency_contacts: [], qr_tokens: [], empresa_profiles: [], empresa_employees: [], empresa_employee_roster: [], empresa_sedes: [], arl_documents: [], qr_regeneration_requests: [], access_log: [], worker_ids: [] };
     function addUser(email, role, meta) {
       var u = { id: uuid(), email: email, password: DEMO_PASSWORD, meta: meta || {}, created_at: daysAgo(40) };
       db.users.push(u);
@@ -66,17 +66,17 @@
       var em = 'empleado' + String(i).padStart(2, '0') + '@auroraconstructora.co';
       var sd = SEDES[i % 3];
       var u = addUser(em, 'persona', { role: 'persona' });
-      if (i <= 24) db.persona_profiles.push({ user_id: u.id, full_name: nm, blood_type: BLOODS[i % 6], allergies: i % 4 === 0 ? ['Penicilina'] : [], conditions: i % 5 === 0 ? ['Asma'] : [], medications: i % 7 === 0 ? ['Losartán'] : [], updated_at: daysAgo(i * 3), health_data_consent_at: daysAgo(i * 3) });
-      else if (i <= 27) db.persona_profiles.push({ user_id: u.id, full_name: nm, blood_type: BLOODS[i % 6], allergies: [], conditions: [], medications: [], updated_at: daysAgo(210), health_data_consent_at: daysAgo(215) });
+      if (i <= 24) db.persona_profiles.push({ user_id: u.id, full_name: nm, cedula: String(1010000000 + i * 37), blood_type: BLOODS[i % 6], allergies: i % 4 === 0 ? ['Penicilina'] : [], conditions: i % 5 === 0 ? ['Asma'] : [], medications: i % 7 === 0 ? ['Losartán'] : [], updated_at: daysAgo(i * 3), health_data_consent_at: daysAgo(i * 3) });
+      else if (i <= 27) db.persona_profiles.push({ user_id: u.id, full_name: nm, cedula: String(1010000000 + i * 37), blood_type: BLOODS[i % 6], allergies: [], conditions: [], medications: [], updated_at: daysAgo(210), health_data_consent_at: daysAgo(215) });
       else db.persona_profiles.push({ user_id: u.id, full_name: nm, blood_type: null, allergies: [], conditions: [], medications: [], updated_at: daysAgo(2), health_data_consent_at: null });
       if (i <= 27) db.emergency_contacts.push({ id: uuid(), persona_id: u.id, full_name: 'Contacto de ' + nm.split(' ')[0], phone: '300' + String(1000000 + i), relationship: 'Familiar' });
       addToken(u.id, false);
       db.empresa_employee_roster.push({ id: uuid(), empresa_id: emp.id, full_name: nm, email: em, matched_persona_id: i <= 28 ? u.id : null, matched_at: i <= 28 ? daysAgo(30 - i) : null, created_at: daysAgo(39), sede_name: sd });
-      if (i <= 28) db.empresa_employees.push({ id: uuid(), empresa_id: emp.id, persona_id: u.id, joined_at: daysAgo(30 - i), sede_id: sedeIds[sd] });
+      if (i <= 28) { var lk = { id: uuid(), empresa_id: emp.id, persona_id: u.id, joined_at: daysAgo(30 - i), sede_id: sedeIds[sd] }; db.empresa_employees.push(lk); db.worker_ids.push({ id_code: 'KM-' + hex(8).toUpperCase(), employee_link_id: lk.id, empresa_id: emp.id, persona_id: u.id, assigned_at: nowIso(), retired_at: null }); }
       if (i === 4 || i === 8) db.qr_regeneration_requests.push({ id: uuid(), persona_id: u.id, reason: i === 4 ? 'Perdí mi tarjeta' : 'Se dañó en el lavado', reviewer_type: 'empresa', empresa_id: emp.id, status: 'pending', approval_token: null, reviewed_at: null, created_at: daysAgo(1) });
     }
     var ana = addUser('persona@demo.com', 'persona', { role: 'persona' });
-    db.persona_profiles.push({ user_id: ana.id, full_name: 'Ana Ruiz', blood_type: 'O+', allergies: ['Penicilina', 'Maní'], conditions: ['Asma'], medications: ['Salbutamol'], updated_at: daysAgo(5), health_data_consent_at: daysAgo(5) });
+    db.persona_profiles.push({ user_id: ana.id, full_name: 'Ana Ruiz', cedula: '1020304050', blood_type: 'O+', allergies: ['Penicilina', 'Maní'], conditions: ['Asma'], medications: ['Salbutamol'], updated_at: daysAgo(5), health_data_consent_at: daysAgo(5) });
     db.emergency_contacts.push({ id: uuid(), persona_id: ana.id, full_name: 'Carlos Ruiz', phone: '3001234567', relationship: 'Esposo' });
     addToken(ana.id, true);
     return db;
@@ -100,34 +100,14 @@
   function profileOf(id) { return db.persona_profiles.filter(function (p) { return p.user_id === id; })[0]; }
   function isComplete(id) {
     var p = profileOf(id);
-    if (!p || !(p.full_name || '').trim() || !p.health_data_consent_at) return false;
-    if (p.is_minor && (!p.guardian_authorized_at || !isMinorDate(p.minor_birth_date))) return false;
+    if (!p || !(p.full_name || '').trim() || !/^[0-9]{5,12}$/.test(p.cedula || '') || !p.health_data_consent_at) return false;
     return db.emergency_contacts.some(function (c) { return c.persona_id === id && (c.phone || '').trim(); });
   }
-  /* Menores de edad (migración 0025): la misma regla que la base real. */
-  function isMinorDate(birth) {
-    var b = new Date(birth), limit = new Date();
-    limit.setFullYear(limit.getFullYear() - 18);
-    return !isNaN(b) && b <= new Date() && b > limit;
-  }
-  function minorAge(birth) {
-    var b = new Date(birth), n = new Date(), age = n.getFullYear() - b.getFullYear();
-    if (n.getMonth() < b.getMonth() || (n.getMonth() === b.getMonth() && n.getDate() < b.getDate())) age--;
-    return age;
-  }
-  /* Devuelve una respuesta de error si la ficha no cumple, o null (y la deja sellada). */
-  function minorRules(item, existing) {
-    var clear = ['minor_birth_date', 'guardian_name', 'guardian_relationship', 'guardian_authorized_at', 'guardian_authorization_version'];
-    if (!item.is_minor) { clear.forEach(function (k) { item[k] = null; }); return null; }
-    if (!isMinorDate(item.minor_birth_date)) return pgError('22023', 'La fecha de nacimiento debe ser la de una persona menor de 18 años.', 400, 'minor_birth_date_invalid');
-    if (String(item.guardian_name || '').trim().length < 3 || !item.guardian_relationship) return pgError('22023', 'Faltan el nombre y el parentesco del representante legal.', 400, 'guardian_data_required');
-    if (!String(item.guardian_authorization_version || '').trim()) return pgError('22023', 'La ficha de un menor necesita la autorización de su representante legal.', 400, 'guardian_authorization_required');
-    if (empresaOf(item.user_id)) return pgError('22023', 'Una ficha de menor de edad no puede estar vinculada a una empresa.', 400, 'minor_linked_to_empresa');
-    var same = existing && existing.is_minor && existing.guardian_authorized_at && existing.guardian_authorization_version === item.guardian_authorization_version;
-    item.guardian_authorized_at = same ? existing.guardian_authorized_at : nowIso();
-    item.health_data_consent_at = item.guardian_authorized_at;
-    return null;
-  }
+  /* IDs de trabajador (migración 0027): uno por vínculo, nunca se reutilizan. */
+  function newWorkerId() { var c; do { c = 'KM-' + hex(8).toUpperCase(); } while (db.worker_ids.some(function (w) { return w.id_code === c; })); return c; }
+  function activeWorkerId(pid) { var w = db.worker_ids.filter(function (x) { return x.persona_id === pid && !x.retired_at; })[0]; return w ? w.id_code : null; }
+  function assignWorkerId(link) { db.worker_ids.push({ id_code: newWorkerId(), employee_link_id: link.id, empresa_id: link.empresa_id, persona_id: link.persona_id, assigned_at: nowIso(), retired_at: null }); }
+  function retireWorkerIds(pid) { db.worker_ids.forEach(function (w) { if (w.persona_id === pid && !w.retired_at) w.retired_at = nowIso(); }); }
   function activeToken(pid) { return db.qr_tokens.filter(function (t) { return t.persona_id === pid && !t.revoked_at; }).sort(function (a, b) { return b.created_at < a.created_at ? -1 : 1; })[0]; }
   function empresaOf(pid) { return db.empresa_employees.filter(function (e) { return e.persona_id === pid; })[0]; }
   function inviteCode() { var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', c; do { c = ''; for (var i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)]; } while (db.empresa_profiles.some(function (e) { return e.invite_code === c; })); return c; }
@@ -161,11 +141,13 @@
       var roster = db.empresa_employee_roster.filter(function (r) { return r.empresa_id === ep.user_id && r.email.toLowerCase() === email && !r.matched_persona_id; })[0];
       var sedeId = null;
       if (roster && roster.sede_name) { var s = db.empresa_sedes.filter(function (x) { return x.empresa_id === ep.user_id && x.name.toLowerCase() === roster.sede_name.toLowerCase(); })[0]; if (s) sedeId = s.id; }
-      var kid = profileOf(uid);
-      if (kid && kid.is_minor) return { __pg: { code: '22023', message: 'Una ficha de menor de edad no puede estar vinculada a una empresa.', hint: 'minor_linked_to_empresa' } };
       var existing = empresaOf(uid);
-      if (existing) { existing.empresa_id = ep.user_id; existing.joined_at = nowIso(); existing.sede_id = sedeId || existing.sede_id; }
-      else db.empresa_employees.push({ id: uuid(), empresa_id: ep.user_id, persona_id: uid, joined_at: nowIso(), sede_id: sedeId });
+      if (existing && existing.empresa_id === ep.user_id) { existing.sede_id = sedeId || existing.sede_id; }
+      else {
+        if (existing) { retireWorkerIds(uid); db.empresa_employees = db.empresa_employees.filter(function (e) { return e !== existing; }); }
+        var link = { id: uuid(), empresa_id: ep.user_id, persona_id: uid, joined_at: nowIso(), sede_id: sedeId };
+        db.empresa_employees.push(link); assignWorkerId(link);
+      }
       if (roster) { roster.matched_persona_id = uid; roster.matched_at = nowIso(); }
       return { empresa_name: ep.legal_name };
     },
@@ -212,13 +194,14 @@
       return db.qr_regeneration_requests.filter(function (r) { return r.persona_id === uid; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; })
         .map(function (r) { return { id: r.id, reason: r.reason, reviewer_type: r.reviewer_type, status: r.status, created_at: r.created_at, reviewed_at: r.reviewed_at }; });
     },
+    get_my_worker_id: function (uid) { return activeWorkerId(uid); },
     resolve_emergency_qr: function (uid, a) {
       var t = db.qr_tokens.filter(function (x) { return x.token === a.p_token; })[0];
       if (!t) return { error: 'not_found' };
       if (t.revoked_at) return { error: 'revoked' };
       var p = profileOf(t.persona_id) || {};
-      db.access_log.push({ qr_token_id: t.id, accessed_at: nowIso() });
-      return { full_name: p.is_minor ? String(p.full_name || '').trim().split(' ')[0] : p.full_name, is_minor: !!p.is_minor, age_years: p.is_minor ? minorAge(p.minor_birth_date) : null, blood_type: p.blood_type, allergies: p.allergies || [], conditions: p.conditions || [], medications: p.medications || [],
+      db.access_log.push({ qr_token_id: t.id, accessed_at: nowIso(), access_level: 'basic' });
+      return { access_level: 'basic', full_name: p.full_name, cedula: p.cedula || null, blood_type: p.blood_type,
         contacts: db.emergency_contacts.filter(function (c) { return c.persona_id === t.persona_id; }).map(function (c) { return { full_name: c.full_name, phone: c.phone, relationship: c.relationship }; }) };
     }
   };
@@ -250,6 +233,18 @@
       t.print_notified_at = nowIso(); save(); return [200, { ok: true }];
     },
     'notify-qr-regeneration-request': function () { return [200, { ok: true }]; },
+    'emergency-card-full': function (uid, body) {
+      if (!uid) return [401, { error: 'invalid_session' }];
+      var au = db.app_users.filter(function (x) { return x.id === uid; })[0];
+      if (!au || au.role !== 'persona') return [403, { error: 'viewer_not_allowed' }];
+      var t = db.qr_tokens.filter(function (x) { return x.token === (body && body.token); })[0];
+      if (!t) return [404, { error: 'not_found' }];
+      if (t.revoked_at) return [404, { error: 'revoked' }];
+      var p = profileOf(t.persona_id) || {};
+      db.access_log.push({ qr_token_id: t.id, accessed_at: nowIso(), access_level: 'full', viewer_user_id: uid }); save();
+      return [200, { access_level: 'full', full_name: p.full_name, cedula: p.cedula || null, blood_type: p.blood_type, allergies: p.allergies || [], conditions: p.conditions || [], medications: p.medications || [],
+        contacts: db.emergency_contacts.filter(function (c) { return c.persona_id === t.persona_id; }).map(function (c) { return { full_name: c.full_name, phone: c.phone, relationship: c.relationship }; }) }];
+    },
     'send-empresa-print-batch': function (uid) {
       var ep = db.empresa_profiles.filter(function (e) { return e.user_id === uid; })[0];
       if (!ep) return [403, { error: 'not_empresa' }];
@@ -286,6 +281,7 @@
       db.empresa_employees = db.empresa_employees.filter(function (r) { return r.persona_id !== uid && r.empresa_id !== uid; });
       db.empresa_profiles = db.empresa_profiles.filter(function (r) { return r.user_id !== uid; });
       db.qr_regeneration_requests = db.qr_regeneration_requests.filter(function (r) { return r.persona_id !== uid; });
+      retireWorkerIds(uid);
       db.app_users = db.app_users.filter(function (r) { return r.id !== uid; });
       db.users = db.users.filter(function (r) { return r.id !== uid; });
       save(); return [200, { ok: true }];
@@ -334,7 +330,7 @@
   }
 
   function handleRest(method, table, params, headers, bodyText, uid) {
-    if (!db[table]) return pgError('42P01', 'relation "' + table + '" does not exist', 404);
+    if (!db[table] || table === 'worker_ids') return pgError('42P01', 'relation "' + table + '" does not exist', 404);
     var prefer = headers['prefer'] || '', wantRep = prefer.indexOf('return=representation') >= 0, single = (headers['accept'] || '').indexOf('vnd.pgrst.object') >= 0;
     var select = params.get('select');
     function out(rows, status) {
@@ -361,8 +357,7 @@
         if (table === 'empresa_sedes' && rows.some(function (r) { return r.empresa_id === item.empresa_id && r.name.toLowerCase() === item.name.toLowerCase(); })) return pgError('23505', 'duplicate key value violates unique constraint "empresa_sedes_empresa_id_name_key"', 409);
         if (table === 'persona_profiles') {
           var merged = existing ? Object.assign({}, existing, items[i]) : item;
-          var minorErr = minorRules(merged, existing);
-          if (minorErr) return minorErr;
+          if (merged.cedula !== undefined && merged.cedula !== null && !/^[0-9]{5,12}$/.test(String(merged.cedula))) return pgError('23514', 'new row for relation "persona_profiles" violates check constraint "persona_profiles_cedula_check"', 400);
           items[i] = merged; item = merged;
         }
         if (existing) {

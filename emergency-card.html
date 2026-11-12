@@ -60,10 +60,6 @@
     background: var(--call); color: var(--oncall); text-decoration: none; border-radius: 16px;
     padding: 12px 16px; margin-bottom: 8px;
   }
-  .minor-note {
-    background: var(--chip); color: var(--text); border-radius: 16px; padding: 12px 16px;
-    margin-bottom: 12px; font-size: 16px; line-height: 1.4;
-  }
   .contact-wrap { margin-bottom: 8px; }
   .contact-wrap:last-child { margin-bottom: 0; }
   .contact-wrap .contact { margin-bottom: 0; }
@@ -87,7 +83,22 @@
   .hosp-name { font-weight: 700; font-size: 16px; }
   .hosp-dist { font-size: 14px; color: var(--muted); }
   .hosp-actions a { color: var(--text); font-weight: 600; font-size: 14px; white-space: nowrap; padding: 12px 0 12px 12px; }
-  a:focus-visible, button:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  .login-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+  .login-form label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); font-weight: 600; }
+  .login-form input {
+    min-height: 52px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--text);
+    font-size: 18px; padding: 10px 14px; font-family: inherit;
+  }
+  .primary {
+    min-height: 56px; width: 100%; background: var(--call); color: var(--oncall); border: 0; border-radius: 16px;
+    font-size: 18px; font-weight: 700; padding: 12px 16px; cursor: pointer; font-family: inherit;
+  }
+  .primary:disabled { opacity: .6; }
+  .login-msg { font-size: 15px; color: var(--amber); min-height: 20px; }
+  .info { font-size: 15px; color: var(--muted); margin: 0; }
+  .info a { color: var(--text); font-weight: 600; }
+  .logged-note { font-size: 14px; color: var(--muted); text-align: center; margin: 0; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -152,6 +163,134 @@
     document.getElementById('content').innerHTML = html;
   }
 
+  var FULL_ERRORS = {
+    viewer_not_allowed: 'Las cuentas de empresa no pueden ver fichas médicas. Entra con una cuenta de persona.',
+    email_not_confirmed: 'Confirma tu correo para ver la ficha completa. Te enviamos un mensaje cuando creaste la cuenta.',
+    not_found: 'Este código no corresponde a ningún perfil de emergencia.',
+    revoked: 'Este código fue reemplazado por uno nuevo y ya no es válido.',
+    expired: 'Este código ya expiró.',
+    rate_limited: 'Llegaste al límite de fichas completas por hoy. Si es una emergencia, llama al 123.'
+  };
+
+  function contactsBlock(data) {
+    var contacts = (data && data.contacts) || [];
+    return contacts.length === 0
+      ? '<p class="empty">No hay contactos registrados.</p>'
+      : contacts.map(function (c) {
+          return '<div class="contact-wrap"><a class="contact" href="tel:' + escapeHtml(c.phone) + '">' +
+            '<span><span class="name">' + escapeHtml(c.full_name) + '</span>' +
+            (c.relationship ? '<br><span class="rel">' + escapeHtml(c.relationship) + '</span>' : '') + '</span>' +
+            '<span class="num">' + PHONE_ICON + escapeHtml(c.phone) + '</span></a>' +
+            whatsappLink(c.phone, data && data.full_name) + '</div>';
+        }).join('');
+  }
+
+  function bloodBlock(data) {
+    var bt = (data && data.blood_type) || '';
+    return bt
+      ? '<div class="blood">' + escapeHtml(bt) + '</div>'
+      : '<p class="empty">No especificado.</p>';
+  }
+
+  function cedulaBlock(data) {
+    var c = (data && data.cedula) || '';
+    return c ? '<div class="blood" style="font-size:32px">' + escapeHtml(c) + '</div>' : '<p class="empty">No registrada.</p>';
+  }
+
+  function loginBlock() {
+    return '<section class="card" id="login-card"><div class="label">Ficha completa</div>' +
+      '<p class="info">Las alergias, las condiciones médicas y los medicamentos se muestran solo a quien tiene una cuenta de Know Me. ' +
+      'Tu acceso queda registrado y se avisa al equipo de Know Me.</p>' +
+      '<form class="login-form" id="login-form" novalidate>' +
+      '<label>Correo<input id="login-email" type="email" autocomplete="username" inputmode="email" autocapitalize="none"></label>' +
+      '<label>Contraseña<input id="login-pass" type="password" autocomplete="current-password"></label>' +
+      '<button class="primary" id="login-btn" type="submit">Ver ficha completa</button>' +
+      '<div class="login-msg" id="login-msg" role="alert"></div></form>' +
+      '<p class="info">¿No tienes cuenta? <a href="https://ficha.knowme.services/demo/">Créala gratis en la app de Know Me</a> y confirma tu correo.</p>' +
+      '</section>';
+  }
+
+  /* Pinta la ficha. Sin sesión: lo básico y el formulario para entrar. Con sesión: todo. */
+  function renderCard(data, token) {
+    var full = data && data.access_level === 'full';
+    if (data && data.full_name) {
+      document.getElementById('who').innerHTML = '<h1>' + escapeHtml(data.full_name) + '</h1>';
+    }
+    var html = '';
+    if (full) {
+      var hasAllergies = data.allergies && data.allergies.length > 0;
+      html += section('Alergias', chipList(data.allergies, true), hasAllergies ? 'alert' : '') +
+        section('Condiciones médicas', chipList(data.conditions));
+    }
+    html += section('Tipo de sangre', bloodBlock(data)) +
+      section('Cédula', cedulaBlock(data)) +
+      section('Contacto de emergencia', contactsBlock(data));
+    if (full) {
+      html += section('Medicamentos', chipList(data.medications)) +
+        '<p class="logged-note">Tu acceso quedó registrado y se avisó al equipo de Know Me.</p>';
+    } else {
+      html += loginBlock();
+    }
+    render(html);
+    if (!full) bindLogin(token);
+  }
+
+  function bindLogin(token) {
+    var form = document.getElementById('login-form');
+    if (!form) return;
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var email = document.getElementById('login-email').value.trim();
+      var pass = document.getElementById('login-pass').value;
+      var msg = document.getElementById('login-msg');
+      var btn = document.getElementById('login-btn');
+      if (!email || !pass) { msg.textContent = 'Escribe tu correo y tu contraseña.'; return; }
+      btn.disabled = true;
+      msg.textContent = 'Entrando…';
+      fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: { 'apikey': ANON_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: pass }),
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.body.access_token) {
+            var code = res.body && (res.body.error_code || res.body.code);
+            msg.textContent = code === 'email_not_confirmed'
+              ? FULL_ERRORS.email_not_confirmed
+              : 'Correo o contraseña incorrectos.';
+            btn.disabled = false;
+            return null;
+          }
+          // La contraseña no se guarda en ningún lado; el acceso solo vive en esta página abierta.
+          document.getElementById('login-pass').value = '';
+          msg.textContent = 'Abriendo la ficha…';
+          return fetch(SUPABASE_URL + '/functions/v1/emergency-card-full', {
+            method: 'POST',
+            headers: {
+              'apikey': ANON_KEY,
+              'Authorization': 'Bearer ' + res.body.access_token,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token: token }),
+          }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); });
+        })
+        .then(function (res) {
+          if (!res) return;
+          if (!res.ok || res.body.error) {
+            msg.textContent = FULL_ERRORS[res.body && res.body.error] || 'No se pudo abrir la ficha completa. Intenta de nuevo.';
+            btn.disabled = false;
+            return;
+          }
+          renderCard(res.body, token);
+        })
+        .catch(function () {
+          msg.textContent = 'No se pudo conectar. Revisa tu internet e intenta de nuevo.';
+          btn.disabled = false;
+        });
+    });
+  }
+
   function load() {
     var params = new URLSearchParams(location.search);
     var token = params.get('token');
@@ -171,48 +310,10 @@
       .then(function (resp) { return resp.json(); })
       .then(function (data) {
         if (data && data.error) {
-          var messages = {
-            not_found: 'Este código no corresponde a ningún perfil de emergencia.',
-            revoked: 'Este código fue reemplazado por uno nuevo y ya no es válido.',
-            expired: 'Este código ya expiró.',
-          };
-          render('<div class="center">' + (messages[data.error] || 'No se pudo leer la información.') + '</div>');
+          render('<div class="center">' + (FULL_ERRORS[data.error] || 'No se pudo leer la información.') + '</div>');
           return;
         }
-        var contacts = (data && data.contacts) || [];
-        var contactsHtml = contacts.length === 0
-          ? '<p class="empty">No hay contactos registrados.</p>'
-          : contacts.map(function (c) {
-              return '<div class="contact-wrap"><a class="contact" href="tel:' + escapeHtml(c.phone) + '">' +
-                '<span><span class="name">' + escapeHtml(c.full_name) + '</span>' +
-                (c.relationship ? '<br><span class="rel">' + escapeHtml(c.relationship) + '</span>' : '') + '</span>' +
-                '<span class="num">' + PHONE_ICON + escapeHtml(c.phone) + '</span></a>' +
-                whatsappLink(c.phone, data && data.full_name) + '</div>';
-            }).join('');
-
-        if (data && data.full_name) {
-          document.getElementById('who').innerHTML = '<h1>' + escapeHtml(data.full_name) + '</h1>';
-        }
-
-        var hasAllergies = data && data.allergies && data.allergies.length > 0;
-        var minorHtml = (data && data.is_minor)
-          ? '<div class="minor-note" role="note"><strong>Menor de edad' +
-            (data.age_years != null ? ' · ' + escapeHtml(data.age_years) + ' años' : '') + '</strong><br>' +
-            'Avisa de inmediato a su representante legal o a su contacto de emergencia.</div>'
-          : '';
-        render(
-          minorHtml +
-          section('Alergias', chipList(data && data.allergies, true), hasAllergies ? 'alert' : '') +
-          section('Condiciones médicas', chipList(data && data.conditions)) +
-          section('Contacto de emergencia', contactsHtml) +
-          section('Tipo de sangre', (function () {
-            var bt = (data && data.blood_type) || '';
-            return bt
-              ? '<div class="blood">' + escapeHtml(bt) + '</div>'
-              : '<p class="empty">No especificado.</p>';
-          })()) +
-          section('Medicamentos', chipList(data && data.medications))
-        );
+        renderCard(data, token);
       })
       .catch(function () {
         render(
